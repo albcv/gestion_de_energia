@@ -1,0 +1,22 @@
+
+#Iniciar servidor
+
+npm run dev
+
+python manage.py runserver
+
+
+#Migraciones
+
+#Eliminar migraciones
+rm -f app_gestion/migrations/0*.py
+rm -rf app_gestion/migrations/__pycache__
+
+# Generar migraciones
+python manage.py makemigrations
+
+# Aplicar migraciones
+python manage.py migrate
+
+#Crear superusuario 
+python manage.py createsuperuser

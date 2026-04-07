@@ -1,0 +1,8 @@
+from django.db import models
+
+class TimeStampedModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Creado")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
+
+    class Meta:
+        abstract = True
