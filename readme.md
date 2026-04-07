@@ -1,4 +1,4 @@
-# 🌱 Sistema de Gestión Energética
+# ⚡ Sistema de Gestión Energética
 
 Plataforma web para la gestión integral de la estrategia de desarrollo energético territorial. Desarrollada con Django REST Framework (backend) y React (frontend), facilita la administración de entidades, servicios eléctricos, portadores energéticos y otros recursos clave.
 
