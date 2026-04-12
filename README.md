@@ -43,7 +43,7 @@ Plataforma web para la gestión integral de la estrategia de desarrollo energét
 app_gestion/
 ├── models/               # Modelos organizados por archivo
 │   ├── base.py           # TimeStampedModel abstracto
-│   ├── oace.py, osde.py, entidad.py, director.py, ...
+│   ├── organismo.py, entidad.py, municipio.py, servicio_electrico.py, ...
 ├── serializers/          # Serializadores DRF
 ├── views/                # ViewSets y vistas de autenticación
 ├── urls/                 # Configuración de rutas (auth, api, consultas)
@@ -58,8 +58,8 @@ app_gestion/
 | POST   | `/register/` | Registro de usuario |
 | POST   | `/logout/` | Cierre de sesión (elimina token) |
 | GET    | `/perfil/` | Datos del usuario autenticado |
-| CRUD   | `/oace/` | Gestión de OACE |
-| CRUD   | `/entidades/` | Gestión de entidades (con herencia empresarial/presupuestada) |
+| CRUD   | `/organismo/` | Gestión de organismos |
+| CRUD   | `/entidades/` | Gestión de entidades  |
 | CRUD   | `/servicios-electricos/` | Gestión de servicios eléctricos |
 | CRUD   | `/portadores-energeticos/` | Gestión de portadores energéticos |
 | GET    | `/consultas/consumo-por-mes/` | Datos agregados para el gráfico anual |

@@ -23,7 +23,7 @@ export function Inicio() {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-yellow-600 to-red-600 rounded-2xl mb-6">
-            <span className="text-white font-bold text-4xl">E</span>
+            <span className="text-white font-bold text-4xl">⚡</span>
           </div>
           <h1 className="text-5xl font-bold text-gray-800 mb-4">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-red-600">Sistema de Gestión Energética</span>
