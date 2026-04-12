@@ -50,6 +50,9 @@ class PortadorEnergeticoElecViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def anios_disponibles(self, request):
-        """Devuelve una lista de años únicos ordenados."""
-        anios = Portador_energetico_elec.objects.values_list('año', flat=True).distinct().order_by('año')
+        """Devuelve una lista de años únicos ordenados de forma descendente."""
+        anios = Portador_energetico_elec.objects.values_list('año', flat=True).distinct().order_by('-año')
         return Response(list(anios))
+
+
+       

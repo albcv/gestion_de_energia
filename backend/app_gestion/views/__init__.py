@@ -13,7 +13,7 @@ from .nae_views import NAEViewSet
 from .unidad_medida_views import UnidadMedidaViewSet
 from .portador_energetico_elec_views import PortadorEnergeticoElecViewSet
 from .consultas.consumo_por_mes import ConsumoPorMesView
-
+from .consultas.entidades_mayor_consumo import TopEntidadesConsumoView
 __all__ = [
     'NAEViewSet',
     'UnidadMedidaViewSet',
@@ -34,5 +34,8 @@ __all__ = [
     'ProvinciaViewSet',
     'ServicioElectricoViewSet',
     'ConsumoPorMesView',
+    'TopEntidadesConsumoView',
+  
+    
    
 ]

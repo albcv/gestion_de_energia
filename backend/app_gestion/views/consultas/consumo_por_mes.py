@@ -9,45 +9,57 @@ import calendar
 
 class ConsumoPorMesView(APIView):
     """
-    Endpoint para obtener el consumo total por mes para un año específico.
-    Ejemplo: /api/consultas/consumo-por-mes/?año=2025
+    Endpoint para obtener el consumo por mes con desplazamiento hacia adelante:
+    - Enero del gráfico muestra consumo real de febrero del mismo año.
+    - Febrero muestra consumo real de marzo.
+    - ...
+    - Noviembre muestra consumo real de diciembre.
+    - Diciembre muestra consumo real de enero del año siguiente.
     """
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        año = request.query_params.get('anio')
-        if not año:
+        año_param = request.query_params.get('anio')
+        if not año_param:
             return Response(
-                {"error": "Debe proporcionar el parámetro 'año'."},
+                {"error": "Debe proporcionar el parámetro 'anio'."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         try:
-            año = int(año)
+            año = int(año_param)
         except ValueError:
             return Response(
                 {"error": "El año debe ser un número entero."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Obtener los datos agrupados por mes
-        datos = (
-            Portador_energetico_elec.objects
-            .filter(año=año)
-            .values('mes')
-            .annotate(total=Sum('consumo_real'))
-            .order_by('mes')
-        )
-
-        # Construir una lista con todos los meses (1-12) incluyendo los que no tienen datos
-        meses = list(range(1, 13))
         resultado = []
-        for mes in meses:
-            total = next((item['total'] for item in datos if item['mes'] == mes), 0)
+        for mes_visual in range(1, 13):
+            # Determinar el mes real cuyo consumo se mostrará en este mes_visual
+            if mes_visual == 12:
+                # Diciembre visual muestra enero del año siguiente
+                año_real = año + 1
+                mes_real = 1
+            else:
+                # Meses 1..11 muestran mes_visual + 1 del mismo año
+                año_real = año
+                mes_real = mes_visual + 1
+
+            total = (
+                Portador_energetico_elec.objects
+                .filter(año=año_real, mes=mes_real)
+                .aggregate(total=Sum('consumo_real'))['total'] or 0
+            )
+
             resultado.append({
-                'mes': mes,
-                'mes_nombre': calendar.month_name[mes],  # nombre en inglés, pero puedes traducir si prefieres
+                'mes': mes_visual,
+                'mes_nombre': calendar.month_name[mes_visual],
                 'total': total
             })
 
         return Response(resultado, status=status.HTTP_200_OK)
+
+
+
+

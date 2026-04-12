@@ -50,7 +50,4 @@ export const deletePortadorEnergeticoElec = async (id) => {
   return response.data;
 };
 
-export const getConsumoPorMes = async (anio) => {
-  const response = await axios.get(`/consultas/consumo-por-mes/?anio=${anio}`);
-  return response.data;
-};
+
