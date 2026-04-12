@@ -30,7 +30,7 @@ export function TopEntidadesConsumo({ año }) {
 
   if (loading) return <div className="text-center py-4">Cargando ranking...</div>;
   if (error) return <div className="text-center py-4 text-red-600">{error}</div>;
-  if (!data.length) return <div className="text-center py-4 text-gray-900">No hay datos para el año {año}.</div>;
+  if (!data.length) return <div className="text-center py-4 text-gray-800">No hay datos para el año {año}.</div>;
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 max-w-4xl mx-auto mt-8">
@@ -44,7 +44,7 @@ export function TopEntidadesConsumo({ año }) {
               <th className="px-4 py-2 text-left text-gray-700">#</th>
               <th className="px-4 py-2 text-left text-gray-700">Nombre de la entidad</th>
               <th className="px-4 py-2 text-left text-gray-700">Código REEUP</th>
-              <th className="px-4 py-2 text-right text-gray-700">Consumo total (kW)</th>
+              <th className="px-4 py-2 text-right text-red-700">Consumo total (kW)</th>
             </tr>
           </thead>
           <tbody>
@@ -53,7 +53,7 @@ export function TopEntidadesConsumo({ año }) {
                 <td className="px-4 py-2">{index + 1}</td>
                 <td className="px-4 py-2">{item.nombre}</td>
                 <td className="px-4 py-2">{item.codigo_reeup}</td>
-                <td className="px-4 py-2 text-right font-semibold">{formatNumber(item.consumo_total)}</td>
+                <td className="px-4 py-2 text-right font-semibold text-red-700">{formatNumber(item.consumo_total)}</td>
               </tr>
             ))}
           </tbody>
