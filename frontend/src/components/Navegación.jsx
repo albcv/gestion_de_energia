@@ -115,13 +115,7 @@ export function Navegación() {
                   >
                     Inicio
                   </Link>
-                  <Link
-                    to={'/consultas'}
-                    onClick={closeMobileMenu}
-                    className="text-white px-4 py-3 rounded-lg hover:bg-white/20 transition-colors"
-                  >
-                    Consultas
-                  </Link>
+                 
                   <Link
                     to={'/perfil'}
                     onClick={closeMobileMenu}
