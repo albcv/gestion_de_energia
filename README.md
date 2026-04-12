@@ -5,7 +5,7 @@ Plataforma web para la gestión integral de la estrategia de desarrollo energét
 ## 🚀 Características principales
 
 - **Autenticación de usuarios** con tokens (registro, login, logout, perfil).
-- **Gestión completa de entidades** (empresariales/presupuestadas), OACE, directores, establecimientos, servicios eléctricos, portadores energéticos, provincias y municipios.
+- **Gestión completa de entidades** (empresariales/presupuestadas), organismos, directores, establecimientos, servicios eléctricos, portadores energéticos, provincias y municipios.
 - **Búsqueda en tiempo real** con autocompletado (`react-select/async`) y filtros múltiples en listados.
 - **Paginación del lado del servidor** para manejar grandes volúmenes de datos (ej. 18.000+ portadores energéticos).
 - **Gráfico de consumo anual** (barras) usando Recharts.

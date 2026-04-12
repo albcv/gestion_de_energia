@@ -1,22 +1,22 @@
-from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from ..models import OSDE
-from ..serializers import OSDESerializer
+from django.db.models import Q
+from ..models import Organismo
+from ..serializers import OrganismoSerializer
 
-class OSDEViewSet(viewsets.ModelViewSet):
+class OrganismoViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = OSDESerializer
+    serializer_class = OrganismoSerializer
 
     def get_queryset(self):
-        queryset = OSDE.objects.all()
+        queryset = Organismo.objects.all()
         search = self.request.query_params.get('search')
         if search:
             queryset = queryset.filter(
                 Q(nombre__icontains=search) |
-                Q(siglas__icontains=search) |
-                Q(oace__nombre__icontains=search) 
+                Q(codigo__icontains=search) |
+                Q(siglas__icontains=search)
             )
-        return queryset
+        return queryset.order_by('codigo') 

@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { CrudIndex } from '../../../components/CrudIndex';
-import { getAllOSDE, deleteOSDE } from '../../../api/crud_modelos/osde';
+import { getAllOrganismo, deleteOrganismo } from '../../../api/crud_modelos/organismo';
 
 const columns = [
   { key: 'nombre', label: 'Nombre' },
   { key: 'siglas', label: 'Siglas' },
-  { key: 'oace_nombre', label: 'OACE' },
+  { key: 'codigo', label: 'Código' },
 ];
 
-export function OSDEIndex() {
+export function OrganismoIndex() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,12 +24,12 @@ export function OSDEIndex() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const result = await getAllOSDE(currentPage, searchTerm);
+      const result = await getAllOrganismo(currentPage, searchTerm);
       setData(result.results || []);
       setTotalCount(result.count || 0);
       setTotalPages(Math.ceil((result.count || 0) / 100));
     } catch (error) {
-      console.error('Error cargando OSDE:', error);
+      console.error('Error cargando Organismo:', error);
     } finally {
       setLoading(false);
     }
@@ -45,18 +45,18 @@ export function OSDEIndex() {
 
   return (
     <CrudIndex
-      title="Gestionar OSDE"
+      title="Gestionar Organismo"
       items={data}
       totalPages={totalPages}
       currentPage={currentPage}
       onPageChange={setCurrentPage}
       onSearch={handleSearch}
-      searchTerm={searchTerm}
-      deleteItem={deleteOSDE}
+      searchTerm={searchTerm}      
+      deleteItem={deleteOrganismo}
       onRefresh={fetchData}
       columns={columns}
-      basePath="/gestionar/osde"
-      itemName="OSDE"
+      basePath="/gestionar/organismo"
+      itemName="Organismo"
       totalCount={totalCount}
       loading={loading}
     />

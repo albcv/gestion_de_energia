@@ -9,17 +9,9 @@ import { PrivateRoute } from './components/PrivateRoute';
 import { Toaster } from 'react-hot-toast';
 
 // Importar páginas de gestión
-import { OACEIndex } from './pages/gestionar/oace';
-import { OACEForm } from './pages/gestionar/oace/formulario';
-import { OACEDetail } from './pages/gestionar/oace/ver';
-
-import { OSDEIndex } from './pages/gestionar/osde';
-import { OSDEForm } from './pages/gestionar/osde/formulario';
-import { OSDEDetail } from './pages/gestionar/osde/ver';
-
-import { SectorEconomicoIndex } from './pages/gestionar/sector_economico';
-import { SectorEconomicoForm } from './pages/gestionar/sector_economico/formulario';
-import { SectorEconomicoDetail } from './pages/gestionar/sector_economico/ver';
+import { OrganismoIndex } from './pages/gestionar/organismo';
+import { OrganismoForm } from './pages/gestionar/organismo/formulario';
+import { OrganismoDetail } from './pages/gestionar/organismo/ver';
 
 import { ProvinciaIndex } from './pages/gestionar/provincia';
 import { ProvinciaForm } from './pages/gestionar/provincia/formulario';
@@ -91,23 +83,11 @@ function AppContent() {
         <Route path='/inicio' element={<PrivateRoute><Inicio /></PrivateRoute>} />
         <Route path='/perfil' element={<PrivateRoute><Perfil /></PrivateRoute>} />
 
-        {/* Gestión de OACE */}
-        <Route path='/gestionar/oace' element={<PrivateRoute><OACEIndex /></PrivateRoute>} />
-        <Route path='/gestionar/oace/crear' element={<PrivateRoute><OACEForm /></PrivateRoute>} />
-        <Route path='/gestionar/oace/editar/:id' element={<PrivateRoute><OACEForm /></PrivateRoute>} />
-        <Route path='/gestionar/oace/ver/:id' element={<PrivateRoute><OACEDetail /></PrivateRoute>} />
-
-        {/* Gestión de OSDE */}
-        <Route path='/gestionar/osde' element={<PrivateRoute><OSDEIndex /></PrivateRoute>} />
-        <Route path='/gestionar/osde/crear' element={<PrivateRoute><OSDEForm /></PrivateRoute>} />
-        <Route path='/gestionar/osde/editar/:id' element={<PrivateRoute><OSDEForm /></PrivateRoute>} />
-        <Route path='/gestionar/osde/ver/:id' element={<PrivateRoute><OSDEDetail /></PrivateRoute>} />
-
-        {/* Gestión de Sectores Económicos */}
-        <Route path='/gestionar/sector-economico' element={<PrivateRoute><SectorEconomicoIndex /></PrivateRoute>} />
-        <Route path='/gestionar/sector-economico/crear' element={<PrivateRoute><SectorEconomicoForm /></PrivateRoute>} />
-        <Route path='/gestionar/sector-economico/editar/:id' element={<PrivateRoute><SectorEconomicoForm /></PrivateRoute>} />
-        <Route path='/gestionar/sector-economico/ver/:id' element={<PrivateRoute><SectorEconomicoDetail /></PrivateRoute>} />
+        {/* Gestión de Organismo */}
+        <Route path='/gestionar/organismo' element={<PrivateRoute><OrganismoIndex /></PrivateRoute>} />
+        <Route path='/gestionar/organismo/crear' element={<PrivateRoute><OrganismoForm /></PrivateRoute>} />
+        <Route path='/gestionar/organismo/editar/:id' element={<PrivateRoute><OrganismoForm /></PrivateRoute>} />
+        <Route path='/gestionar/organismo/ver/:id' element={<PrivateRoute><OrganismoDetail /></PrivateRoute>} />
 
         {/* Gestión de Provincias */}
         <Route path='/gestionar/provincia' element={<PrivateRoute><ProvinciaIndex /></PrivateRoute>} />

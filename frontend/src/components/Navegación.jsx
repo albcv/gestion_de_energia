@@ -19,9 +19,7 @@ export function Navegación() {
     {
       title: "Entidades",
       items: [
-        { name: 'OACE', path: '/gestionar/oace' },
-        { name: 'OSDE', path: '/gestionar/osde' },
-        { name: 'Sector económico', path: '/gestionar/sector-economico' },
+        { name: 'Organismo', path: '/gestionar/organismo' },
         { name: 'Entidad', path: '/gestionar/entidad' },
         { name: 'Establecimiento', path: '/gestionar/establecimiento' },
         { name: 'NAE', path: '/gestionar/nae' },

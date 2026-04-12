@@ -1,3 +1,4 @@
+// Registro.jsx
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { registerUser } from '../api/auth.js';
@@ -38,7 +39,7 @@ export function Registro() {
       navigate('/inicio');
     } catch (err) {
       if (typeof err === 'object') {
-        setErrors(err); // Errores por campo del backend
+        setErrors(err);
       } else {
         setApiError(err.message || 'Error en el registro');
       }
@@ -83,11 +84,8 @@ export function Registro() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-yellow-600 to-red-600 p-8 text-center">
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-red-600 font-bold text-3xl">R</span>
-            </div>
-            <h1 className="text-3xl font-bold text-white">Crear Cuenta</h1>
-            <p className="text-green-100 mt-2">Únete a nuestra plataforma</p>
+            <h1 className="text-3xl font-bold text-white">Gestión de Energía ⚡</h1>
+            <p className="text-green-100 mt-2">Crea tu cuenta para comenzar</p>
           </div>
 
           {/* Form */}

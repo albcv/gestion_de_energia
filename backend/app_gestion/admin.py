@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    OACE, OSDE, Sector_economico, Provincia, Municipio,
+    Organismo, Sector_economico, Provincia, Municipio,
     Entidad, Entidad_presupuestada, Entidad_empresarial,
     Director, Establecimiento, Servicio_electrico,
     NAE, Unidad_medida, Portador_energetico_elec
@@ -8,8 +8,7 @@ from .models import (
 
 
 # Registro de modelos
-admin.site.register(OACE)
-admin.site.register(OSDE)
+admin.site.register(Organismo)
 admin.site.register(Sector_economico)
 admin.site.register(Provincia)
 admin.site.register(Municipio)

@@ -2,18 +2,17 @@ from ..base import TimeStampedSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.core.validators import RegexValidator
-from app_gestion.models import Entidad
+from app_gestion.models import Entidad, Organismo
 from ..director import DirectorSerializer
 
 class EntidadSerializer(TimeStampedSerializer):
-    oace_nombre = serializers.CharField(source='oace.nombre', read_only=True)
-    osde_nombre = serializers.CharField(source='osde.nombre', read_only=True)
-    sector_economico_nombre = serializers.CharField(source='sector_economico.nombre', read_only=True)
+    
     nae_nombre = serializers.CharField(source='nae.actividad', read_only=True)
     nae_codigo = serializers.CharField(source='nae.codigo', read_only=True) 
     municipio_nombre = serializers.CharField(source='municipio.nombre', read_only=True)
     tipo = serializers.SerializerMethodField()
     director = DirectorSerializer(read_only=True)
+    organismo = serializers.SerializerMethodField()
 
     # Validaciones
     codigo_REEUP = serializers.CharField(
@@ -136,19 +135,6 @@ class EntidadSerializer(TimeStampedSerializer):
         ]
     )
 
-    ruta_documento_contrato_electrico = serializers.CharField(
-        max_length=255,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        validators=[
-            UniqueValidator(
-                queryset=Entidad.objects.all(),
-                message="Esta ruta de contrato ya está registrada en otra entidad."
-            )
-        ]
-    )
-
     class Meta:
         model = Entidad
         fields = '__all__'
@@ -159,14 +145,15 @@ class EntidadSerializer(TimeStampedSerializer):
         elif hasattr(obj, 'entidad_presupuestada'):
             return 'presupuestada'
         return None
-    
 
-
-    def validate(self, data):
-        oace = data.get('oace')
-        osde = data.get('osde')
-        # Si ambos están presentes -> error
-        if oace and osde:
-            raise serializers.ValidationError("La entidad no puede pertenecer a un OACE y a un OSDE simultáneamente. Debe elegir solo uno.")
-        
-        return data
+    def get_organismo(self, obj):
+        if obj.codigo_REEUP:
+            partes = obj.codigo_REEUP.split('.')
+            if partes:
+                codigo_org = partes[0]
+                try:
+                    organismo = Organismo.objects.get(codigo=codigo_org)
+                    return organismo.nombre  
+                except Organismo.DoesNotExist:
+                    return None
+        return None

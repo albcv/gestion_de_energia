@@ -1,6 +1,5 @@
 from .auth_views import login, register, logout, perfil_usuario, cambiar_password
-from .oace_views import OACEViewSet
-from .osde_views import OSDEViewSet
+from .organismo_views import OrganismoViewSet
 from .entidad_views.entidad_views import EntidadViewSet
 from .entidad_views.entidad_empresarial_views import EntidadEmpresarialViewSet
 from .entidad_views.entidad_presupuestada_views import EntidadPresupuestadaViewSet
@@ -24,8 +23,7 @@ __all__ = [
     'logout',
     'perfil_usuario',
     'cambiar_password',
-    'OACEViewSet',
-    'OSDEViewSet',
+    'OrganismoViewSet',
     'EntidadViewSet',
     'EntidadEmpresarialViewSet',
     'EntidadPresupuestadaViewSet',

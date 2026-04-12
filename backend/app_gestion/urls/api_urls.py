@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from ..views import (
-    OACEViewSet, OSDEViewSet, EntidadViewSet, DirectorViewSet,
+    OrganismoViewSet, EntidadViewSet, DirectorViewSet,
     SectorEconomicoViewSet, EstablecimientoViewSet, MunicipioViewSet,
     ProvinciaViewSet, ServicioElectricoViewSet, 
     EntidadEmpresarialViewSet, EntidadPresupuestadaViewSet,
@@ -10,8 +10,7 @@ from ..views import (
 )
 
 router = DefaultRouter()
-router.register(r'oace', OACEViewSet, basename='oace')
-router.register(r'osde', OSDEViewSet, basename='osde')
+router.register(r'organismo', OrganismoViewSet, basename='organismo')
 router.register(r'entidades', EntidadViewSet, basename='entidades')
 router.register(r'entidades_emp', EntidadEmpresarialViewSet, basename='entidades_emp')
 router.register(r'entidades_pre', EntidadPresupuestadaViewSet, basename='entidades_pre')

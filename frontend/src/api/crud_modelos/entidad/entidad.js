@@ -7,17 +7,16 @@ export const getAllEntidad = async (page = 1, filters = {}) => {
     const params = new URLSearchParams({ page });
     if (filters.municipio) params.append('municipio', filters.municipio);
     if (filters.tipo) params.append('tipo', filters.tipo);
-    if (filters.sector) params.append('sector', filters.sector);
-    if (filters.codigoREEUP) params.append('codigo_REEUP', filters.codigoREEUP);
+    if (filters.codigo_REEUP) params.append('codigo_REEUP', filters.codigo_REEUP);
+    if (filters.organismo) params.append('organismo', filters.organismo);
     if (filters.search) params.append('search', filters.search);
     const response = await axios.get(`${URL}?${params.toString()}`);
-    return response.data; // { count, results, next, previous }
+    return response.data;
   } catch (error) {
     console.error('Error al obtener Entidades:', error);
     throw error;
   }
 };
-
 export const getEntidadById = async (id) => {
   try {
     const response = await axios.get(`${URL}${id}/`);

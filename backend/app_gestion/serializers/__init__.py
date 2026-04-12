@@ -1,6 +1,5 @@
 from .user import UserSerializer
-from .oace import OACESerializer
-from .osde import OSDESerializer
+from .organismo import OrganismoSerializer
 from .entidad.entidad import EntidadSerializer
 from .entidad.entidad_empresarial import EntidadEmpresarialSerializer
 from .entidad.entidad_presupuestada import EntidadPresupuestadaSerializer
@@ -20,8 +19,7 @@ __all__ = [
     'UnidadMedidaSerializer',
     'PortadorEnergeticoElecSerializer',
     'UserSerializer',
-    'OACESerializer',
-    'OSDESerializer',
+    'OrganismoSerializer',
     'EntidadSerializer',
     'EntidadEmpresarialSerializer',
     'EntidadPresupuestadaSerializer',

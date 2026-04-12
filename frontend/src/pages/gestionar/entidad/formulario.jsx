@@ -4,18 +4,13 @@ import { CrudForm } from '../../../components/CrudForm';
 import { getEntidadById, deleteEntidad } from '../../../api/crud_modelos/entidad/entidad.js';
 import { createEntidadPresupuestada, updateEntidadPresupuestada } from '../../../api/crud_modelos/entidad/entidad_presupuestada';
 import { createEntidadEmpresarial, updateEntidadEmpresarial } from '../../../api/crud_modelos/entidad/entidad_empresarial';
-import { getAllOACE } from '../../../api/crud_modelos/oace';
-import { getAllOSDE } from '../../../api/crud_modelos/osde';
-import { getAllSectorEconomico } from '../../../api/crud_modelos/sector_economico';
 import { searchNAE } from '../../../api/crud_modelos/nae';
 import { getAllMunicipio } from '../../../api/crud_modelos/municipio';
 import { toast } from 'react-hot-toast';
 
 export function EntidadForm() {
   const { id } = useParams();
-  const [oaceOptions, setOaceOptions] = useState([]);
-  const [osdeOptions, setOsdeOptions] = useState([]);
-  const [sectorOptions, setSectorOptions] = useState([]);
+ 
   const [municipioOptions, setMunicipioOptions] = useState([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [tipoOptions] = useState([
@@ -29,15 +24,11 @@ export function EntidadForm() {
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const [oaceData, osdeData, sectorData, municipioData] = await Promise.all([
-          getAllOACE(),
-          getAllOSDE(),
-          getAllSectorEconomico(),
+        const [municipioData] = await Promise.all([
+       
           getAllMunicipio()
         ]);
-        setOaceOptions(oaceData.results.map(o => ({ value: o.id, label: o.nombre })));
-        setOsdeOptions(osdeData.results.map(o => ({ value: o.id, label: o.nombre })));
-        setSectorOptions(sectorData.results.map(s => ({ value: s.id, label: s.nombre })));
+      
         setMunicipioOptions(municipioData.results.map(m => ({ value: m.id, label: `${m.nombre} (${m.provincia_nombre})` })));
       } catch (error) {
         console.error('Error cargando opciones', error);
@@ -87,24 +78,23 @@ export function EntidadForm() {
     { name: 'tipo', label: 'Tipo de entidad', type: 'select', required: true, options: tipoOptions },
     { name: 'codigo_REEUP', label: 'Código REEUP', type: 'text', required: true, placeholder: '211.0.06761' },
     { name: 'municipio', label: 'Municipio', type: 'select', required: true, options: municipioOptions },
-    { name: 'sector_economico', label: 'Sector económico', type: 'select', required: true, options: sectorOptions },
+  
     { 
       name: 'nae', 
       label: 'NAE', 
       type: 'autoselect', 
-      required: true, 
+      required: false, 
       loadOptions: searchNAE,
       placeholder: 'Buscar NAE por código o actividad...' 
     },
-    { name: 'oace', label: 'OACE', type: 'select', required: false, options: oaceOptions },
-    { name: 'osde', label: 'OSDE', type: 'select', required: false, options: osdeOptions },
+   
     { name: 'siglas', label: 'Siglas', type: 'text', required: false, placeholder: 'Siglas (opcional)' },
     { name: 'cuenta_bancaria', label: 'Cuenta bancaria', type: 'text', required: false, placeholder: '16 dígitos' },
     { name: 'telefono', label: 'Teléfono', type: 'text', required: false, placeholder: 'Teléfono (opcional)' },
     { name: 'NIT', label: 'NIT', type: 'text', required: false, placeholder: 'NIT (opcional)' },
     { name: 'direccion', label: 'Dirección', type: 'text', required: false, placeholder: 'Dirección (opcional)' },
     { name: 'geolocalizacion', label: 'Geolocalización', type: 'text', required: false, placeholder: 'lat,lon (opcional)' },
-    { name: 'ruta_documento_contrato_electrico', label: 'Ruta del contrato eléctrico', type: 'text', required: false, placeholder: '/documentos/contrato.pdf (opcional)' },
+   
   ];
 
   const getCreateFunction = (tipo) => {

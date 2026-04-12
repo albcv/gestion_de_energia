@@ -44,7 +44,8 @@ export function PortadorEnergeticoElecIndex() {
           getAllServicioElectrico()
         ]);
         setAnios(aniosData);
-        setServicios(serviciosList.map(s => ({ value: s.codigo_servicio, label: s.codigo_servicio })));
+        const serviciosArray = serviciosList.results || serviciosList; // Maneja paginación
+        setServicios(serviciosArray.map(s => ({ value: s.codigo_servicio, label: s.codigo_servicio })));
       } catch (error) {
         console.error('Error cargando opciones de filtros:', error);
       }
@@ -156,7 +157,7 @@ export function PortadorEnergeticoElecIndex() {
         onSearch={handleSearch}
         searchTerm={filters.search}
         deleteItem={deletePortadorEnergeticoElec}
-        onRefresh={fetchData}  
+        onRefresh={fetchData}
         columns={columns}
         basePath="/gestionar/portador_energetico_elec"
         itemName="Portador energético"

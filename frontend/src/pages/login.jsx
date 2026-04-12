@@ -1,3 +1,4 @@
+// Login.jsx
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { loginUser } from '../api/auth.js';
@@ -41,10 +42,8 @@ export function Login() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-yellow-600 to-red-600 p-8 text-center">
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-red-600 font-bold text-3xl">E</span>
-            </div>
-            <h1 className="text-3xl font-bold text-white">Iniciar Sesión</h1>
+            <h1 className="text-3xl font-bold text-white">Gestión de Energía ⚡</h1>
+            <p className="text-blue-100 mt-2">Inicia sesión en tu cuenta</p>
           </div>
 
           {/* Form */}

@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { CrudIndex } from '../../../components/CrudIndex';
 import { getAllEntidad, deleteEntidad } from '../../../api/crud_modelos/entidad/entidad';
 import { getAllMunicipio } from '../../../api/crud_modelos/municipio';
-import { getAllSectorEconomico } from '../../../api/crud_modelos/sector_economico';
+import { searchOrganismo } from '../../../api/crud_modelos/organismo';
+import AsyncSelect from 'react-select/async';
 
 const columns = [
   { key: 'nombre', label: 'Nombre' },
-  { key: 'sector_economico_nombre', label: 'Sector' },
-  { key: 'nae_nombre', label: 'NAE' },
+  { key: 'organismo', label: 'Organismo' },
   { key: 'municipio_nombre', label: 'Municipio' },
 ];
 
@@ -26,25 +26,19 @@ export function EntidadIndex() {
   const [filters, setFilters] = useState({
     municipio: '',
     tipo: '',
-    sector: '',
-    codigoREEUP: '',
+    codigo_REEUP: '',
+    organismo: '',
     search: ''
   });
 
   const [municipios, setMunicipios] = useState([]);
-  const [sectores, setSectores] = useState([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
 
-  // Cargar opciones para los selects
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const [municipiosRes, sectoresRes] = await Promise.all([
-          getAllMunicipio(),
-          getAllSectorEconomico()
-        ]);
+        const municipiosRes = await getAllMunicipio();
         setMunicipios((municipiosRes.results || []).map(m => m.nombre).sort());
-        setSectores((sectoresRes.results || []).map(s => s.nombre).sort());
       } catch (error) {
         console.error('Error cargando opciones de filtros:', error);
       } finally {
@@ -54,10 +48,9 @@ export function EntidadIndex() {
     loadOptions();
   }, []);
 
-  // Reiniciar página al cambiar filtros
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters.municipio, filters.tipo, filters.sector, filters.codigoREEUP, filters.search]);
+  }, [filters.municipio, filters.tipo, filters.codigo_REEUP, filters.organismo, filters.search]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -82,12 +75,16 @@ export function EntidadIndex() {
     setFilters(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleOrganismoChange = (selected) => {
+    setFilters(prev => ({ ...prev, organismo: selected ? selected.value : '' }));
+  };
+
   const handleSearch = (term) => {
     setFilters(prev => ({ ...prev, search: term }));
   };
 
   const clearFilters = () => {
-    setFilters({ municipio: '', tipo: '', sector: '', codigoREEUP: '', search: '' });
+    setFilters({ municipio: '', tipo: '', codigo_REEUP: '', organismo: '', search: '' });
   };
 
   if (loadingOptions) {
@@ -120,24 +117,25 @@ export function EntidadIndex() {
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
-          <select
-            name="sector"
-            value={filters.sector}
-            onChange={handleFilterChange}
-            className="px-3 py-2 border border-gray-300 rounded"
-          >
-            <option value="">Todos los sectores</option>
-            {sectores.map(s => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
+          <div className="col-span-1">
+            <AsyncSelect
+              loadOptions={searchOrganismo}
+              placeholder="Buscar organismo..."
+              onChange={handleOrganismoChange}
+              isClearable
+              defaultOptions
+              className="react-select-container"
+              classNamePrefix="react-select"
+              value={filters.organismo ? { value: filters.organismo, label: `Código ${filters.organismo}` } : null}
+            />
+          </div>
           <input
             type="text"
-            name="codigoREEUP"
+            name="codigo_REEUP"
             placeholder="Código REEUP"
-            value={filters.codigoREEUP}
+            value={filters.codigo_REEUP}
             onChange={handleFilterChange}
-            className="px-3 py-2 border border-gray-300 rounded"
+            className="px-3 py-2 border border-gray-300 rounded placeholder-gray-600"
           />
           <button
             onClick={clearFilters}
