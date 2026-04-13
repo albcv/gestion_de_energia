@@ -9,18 +9,18 @@ import calendar
 
 class ConsumoPorMesView(APIView):
     """
-    Endpoint para obtener el consumo por mes con desplazamiento hacia adelante:
-    - Enero del gráfico muestra consumo real de febrero del mismo año.
-    - Febrero muestra consumo real de marzo.
-    - ...
-    - Noviembre muestra consumo real de diciembre.
-    - Diciembre muestra consumo real de enero del año siguiente.
+    Endpoint para obtener el consumo por mes con desplazamiento hacia adelante.
+    Parámetros:
+        - anio (requerido): año visual.
+        - unidad (opcional): 'kW' (default) o 'MW'.
     """
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         año_param = request.query_params.get('anio')
+        unidad = request.query_params.get('unidad', 'kW').upper()
+
         if not año_param:
             return Response(
                 {"error": "Debe proporcionar el parámetro 'anio'."},
@@ -34,23 +34,26 @@ class ConsumoPorMesView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        if unidad not in ('KW', 'MW'):
+            unidad = 'MW'
+
         resultado = []
         for mes_visual in range(1, 13):
-            # Determinar el mes real cuyo consumo se mostrará en este mes_visual
             if mes_visual == 12:
-                # Diciembre visual muestra enero del año siguiente
                 año_real = año + 1
                 mes_real = 1
             else:
-                # Meses 1..11 muestran mes_visual + 1 del mismo año
                 año_real = año
                 mes_real = mes_visual + 1
 
-            total = (
+            total_kw = (
                 Portador_energetico_elec.objects
                 .filter(año=año_real, mes=mes_real)
                 .aggregate(total=Sum('consumo_real'))['total'] or 0
             )
+
+            # Conversión según unidad
+            total = total_kw / 1000.0 if unidad == 'MW' else total_kw
 
             resultado.append({
                 'mes': mes_visual,
@@ -59,7 +62,3 @@ class ConsumoPorMesView(APIView):
             })
 
         return Response(resultado, status=status.HTTP_200_OK)
-
-
-
-

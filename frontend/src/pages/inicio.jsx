@@ -10,6 +10,7 @@ export function Inicio() {
   const [selectedYear, setSelectedYear] = useState(null);
   const [years, setYears] = useState([]);
   const [loadingYears, setLoadingYears] = useState(true);
+  const [unidad, setUnidad] = useState('MW'); 
 
   useEffect(() => {
     const fetchYears = async () => {
@@ -60,8 +61,9 @@ export function Inicio() {
           </p>
         </div>
 
-        {years.length > 0 && (
-          <div className="flex justify-center mb-6">
+        {/* Filtros: año y unidad */}
+        <div className="flex justify-center gap-4 mb-6 flex-wrap">
+          {years.length > 0 && (
             <div className="bg-white rounded-lg shadow-md p-2 flex items-center gap-3">
               <label htmlFor="yearSelect" className="text-gray-700 font-medium">Año:</label>
               <select
@@ -75,8 +77,30 @@ export function Inicio() {
                 ))}
               </select>
             </div>
+          )}
+
+          <div className="bg-white rounded-lg shadow-md p-2 flex items-center gap-3">
+            <span className="text-gray-700 font-medium">Unidad:</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setUnidad('kW')}
+                className={`px-3 py-1 rounded-md transition ${
+                  unidad === 'kW' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                kW
+              </button>
+              <button
+                onClick={() => setUnidad('MW')}
+                className={`px-3 py-1 rounded-md transition ${
+                  unidad === 'MW' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                MW
+              </button>
+            </div>
           </div>
-        )}
+        </div>
 
         {years.length === 0 && (
           <div className="text-center py-12 text-gray-600">
@@ -86,8 +110,8 @@ export function Inicio() {
 
         {selectedYear && (
           <>
-            <ConsumoAnualChart año={selectedYear} />
-            <TopEntidadesConsumo año={selectedYear} />
+            <ConsumoAnualChart año={selectedYear} unidad={unidad} />
+            <TopEntidadesConsumo año={selectedYear} unidad={unidad} />
           </>
         )}
       </div>

@@ -8,14 +8,10 @@ from ...models import Portador_energetico_elec
 
 class TopEntidadesConsumoView(APIView):
     """
-    Endpoint para obtener las 10 entidades con mayor consumo total en un año VISUAL,
-    aplicando el desplazamiento: el consumo de un mes es el consumo del mes siguiente.
-    
-    Para el año visual Y se suman los consumos reales de:
-    - febrero a diciembre de Y (meses 2..12)
-    - enero de Y+1 (mes 1)
-    
-    Ejemplo: /api/consultas/top-entidades/2025/
+    Endpoint para las 10 entidades de mayor consumo en un año VISUAL.
+    Parámetros:
+        - anio (en URL): año visual.
+        - unidad (query): 'kW' (default) o 'MW'.
     """
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -29,7 +25,10 @@ class TopEntidadesConsumoView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Condición para sumar los consumos que corresponden al año visual 'anio'
+        unidad = request.query_params.get('unidad', 'kW').upper()
+        if unidad not in ('KW', 'MW'):
+            unidad = 'MW'
+
         condicion = Q(año=anio, mes__gte=2, mes__lte=12) | Q(año=anio + 1, mes=1)
 
         resultados = (
@@ -40,13 +39,14 @@ class TopEntidadesConsumoView(APIView):
             .order_by('-consumo_total')[:10]
         )
 
-        data = [
-            {
+        data = []
+        for item in resultados:
+            total_kw = item['consumo_total'] or 0
+            total = total_kw / 1000.0 if unidad == 'MW' else total_kw
+            data.append({
                 "nombre": item['servicio__entidad__nombre'],
                 "codigo_reeup": item['servicio__entidad__codigo_REEUP'],
-                "consumo_total": item['consumo_total'] or 0,
-            }
-            for item in resultados
-        ]
+                "consumo_total": total
+            })
 
         return Response(data, status=status.HTTP_200_OK)
