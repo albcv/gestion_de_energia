@@ -5,7 +5,7 @@ from ..views import (
     SectorEconomicoViewSet, EstablecimientoViewSet, MunicipioViewSet,
     ProvinciaViewSet, ServicioElectricoViewSet, 
     EntidadEmpresarialViewSet, EntidadPresupuestadaViewSet,
-    NAEViewSet, UnidadMedidaViewSet, PortadorEnergeticoElecViewSet,
+    NAEViewSet, PortadorEnergeticoElecViewSet,
    
 )
 
@@ -21,7 +21,6 @@ router.register(r'municipios', MunicipioViewSet, basename='municipios')
 router.register(r'provincias', ProvinciaViewSet, basename='provincias')
 router.register(r'servicios-electricos', ServicioElectricoViewSet, basename='servicios-electricos')
 router.register(r'nae', NAEViewSet, basename='nae')
-router.register(r'unidades-medida', UnidadMedidaViewSet, basename='unidades-medida')
 router.register(r'portadores-energeticos', PortadorEnergeticoElecViewSet, basename='portadores-energeticos')
 
 

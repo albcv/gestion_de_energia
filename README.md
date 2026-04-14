@@ -133,12 +133,6 @@ app_gestion/
 
 <br>
 
-**Entidades de mayor consumo energético**
-
-<img src="img/entidades_mayor_consumo.png" alt="Top 10 de las entidades de mayor consumo energético en un año">
-
-<br>
-
 
 **Modelo lógico de la aplicación**
 

@@ -12,7 +12,7 @@ class PortadorEnergeticoElecViewSet(viewsets.ModelViewSet):
     serializer_class = PortadorEnergeticoElecSerializer
 
     def get_queryset(self):
-        queryset = Portador_energetico_elec.objects.select_related('unidad_medida', 'servicio').all()
+        queryset = Portador_energetico_elec.objects.select_related('servicio').all()
         anio = self.request.query_params.get('anio')
         mes = self.request.query_params.get('mes')
         servicio = self.request.query_params.get('servicio')

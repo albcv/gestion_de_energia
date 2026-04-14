@@ -23,7 +23,7 @@ const yAxisFormat = (value) => {
   return value.toString();
 };
 
-export function ConsumoAnualChart({ año, unidad = 'kW' }) {
+export function ConsumoAnualChart({ año, unidad = 'kWh' }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -53,9 +53,12 @@ export function ConsumoAnualChart({ año, unidad = 'kW' }) {
   if (!data.length) return <div className="text-center py-12 text-gray-600">No hay datos disponibles para el año {año}</div>;
 
   const maxTotal = Math.max(...data.map(d => d.total), 0);
-  const yDomain = [0, maxTotal * 1.1 || 100];
+  const yDomain = [0, Math.ceil(maxTotal * 1.1)];
 
-  const unidadLower = unidad === 'MW' ? 'MW' : 'kW';
+  let unidadLower = 'kWh';
+  if (unidad === 'MWh') unidadLower = 'MWh';
+  else if (unidad === 'GWh') unidadLower = 'GWh';
+  else unidadLower = 'kWh';
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 max-w-4xl mx-auto">

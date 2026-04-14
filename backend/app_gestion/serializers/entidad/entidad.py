@@ -13,6 +13,7 @@ class EntidadSerializer(TimeStampedSerializer):
     tipo = serializers.SerializerMethodField()
     director = DirectorSerializer(read_only=True)
     organismo = serializers.SerializerMethodField()
+    cuenta_bancaria_formateada = serializers.SerializerMethodField()
 
     # Validaciones
     codigo_REEUP = serializers.CharField(
@@ -157,3 +158,9 @@ class EntidadSerializer(TimeStampedSerializer):
                 except Organismo.DoesNotExist:
                     return None
         return None
+
+    def get_cuenta_bancaria_formateada(self, obj):
+        cuenta = obj.cuenta_bancaria
+        if cuenta and isinstance(cuenta, str) and len(cuenta) == 16 and cuenta.isdigit():
+            return f"{cuenta[:4]}-{cuenta[4:8]}-{cuenta[8:12]}-{cuenta[12:16]}"
+        return cuenta

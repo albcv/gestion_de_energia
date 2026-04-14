@@ -71,7 +71,7 @@ export function PortadorEnergeticoElecForm() {
       loadOptions: searchServicioElectrico,
       placeholder: 'Buscar servicio por código...' 
     },
-    { name: 'unidad_medida', label: 'Unidad de medida', type: 'select', required: true, options: unidadMedidaOptions },
+  
   ];
 
   if (loading) {

@@ -10,7 +10,7 @@ export function Inicio() {
   const [selectedYear, setSelectedYear] = useState(null);
   const [years, setYears] = useState([]);
   const [loadingYears, setLoadingYears] = useState(true);
-  const [unidad, setUnidad] = useState('MW'); 
+  const [unidad, setUnidad] = useState('MWh'); 
 
   useEffect(() => {
     const fetchYears = async () => {
@@ -83,20 +83,28 @@ export function Inicio() {
             <span className="text-gray-700 font-medium">Unidad:</span>
             <div className="flex gap-2">
               <button
-                onClick={() => setUnidad('kW')}
+                onClick={() => setUnidad('kWh')}
                 className={`px-3 py-1 rounded-md transition ${
-                  unidad === 'kW' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  unidad === 'kWh' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                kW
+                kWh
               </button>
               <button
-                onClick={() => setUnidad('MW')}
+                onClick={() => setUnidad('MWh')}
                 className={`px-3 py-1 rounded-md transition ${
-                  unidad === 'MW' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  unidad === 'MWh' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                MW
+                MWh
+              </button>
+              <button
+                onClick={() => setUnidad('GWh')}
+                className={`px-3 py-1 rounded-md transition ${
+                  unidad === 'GWh' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                GWh
               </button>
             </div>
           </div>

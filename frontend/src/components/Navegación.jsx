@@ -30,7 +30,6 @@ export function Navegación() {
       items: [
         { name: 'Servicio eléctrico', path: '/gestionar/servicio-electrico' },
         { name: 'Portador energético', path: '/gestionar/portador_energetico_elec' },
-        { name: 'Unidad de medida', path: '/gestionar/unidad_medida' },
       ]
     },
     {

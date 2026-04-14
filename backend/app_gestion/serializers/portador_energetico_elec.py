@@ -6,7 +6,6 @@ import datetime
 
 class PortadorEnergeticoElecSerializer(TimeStampedSerializer):
     servicio_codigo = serializers.IntegerField(source='servicio.codigo_servicio', read_only=True)
-    unidad_medida_nombre = serializers.SerializerMethodField()
     consumo_real_con_unidad = serializers.SerializerMethodField()
     mes_nombre = serializers.SerializerMethodField()
 
@@ -42,17 +41,11 @@ class PortadorEnergeticoElecSerializer(TimeStampedSerializer):
             raise serializers.ValidationError("El consumo planificado no puede ser negativo.")
         return value
 
-    def get_unidad_medida_nombre(self, obj):
-        """Retorna el nombre de la unidad de medida o None si no existe."""
-        if obj.unidad_medida:
-            return obj.unidad_medida.unidad
-        return None
 
     def get_consumo_real_con_unidad(self, obj):
-        """Retorna el consumo real con su unidad si existe, solo el número si no."""
-        if obj.unidad_medida:
-            return f"{obj.consumo_real} {obj.unidad_medida.unidad}"
-        return str(obj.consumo_real)  # o f"{obj.consumo_real} (sin unidad)" si prefieres
+        """Retorna el consumo real con su unidad de medida"""
+        return f"{obj.consumo_real} kWh"
+        
 
     def get_mes_nombre(self, obj):
         meses = {

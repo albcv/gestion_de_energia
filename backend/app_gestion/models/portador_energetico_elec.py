@@ -14,12 +14,6 @@ class Portador_energetico_elec(TimeStampedModel):
         verbose_name="Servicio eléctrico"
     )
 
-    unidad_medida = models.ForeignKey(
-        'app_gestion.Unidad_medida',
-        on_delete=models.PROTECT,
-        related_name='portadores',
-        verbose_name="Unidad de medida"
-    )
 
     class Meta:
         indexes = [

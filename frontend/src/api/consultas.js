@@ -1,7 +1,7 @@
 import axios from './axios';
 
 
-export const getConsumoPorMes = async (anio, unidad = 'kW') => {
+export const getConsumoPorMes = async (anio, unidad = 'kWh') => {
   try {
     const response = await axios.get(`/consultas/consumo-por-mes/`, {
       params: { anio, unidad }
@@ -13,7 +13,7 @@ export const getConsumoPorMes = async (anio, unidad = 'kW') => {
   }
 };
 
-export const getTopEntidadesConsumo = async (anio, unidad = 'kW') => {
+export const getTopEntidadesConsumo = async (anio, unidad = 'kWh') => {
   try {
     const response = await axios.get(`/consultas/top-entidades/${anio}/`, {
       params: { unidad }

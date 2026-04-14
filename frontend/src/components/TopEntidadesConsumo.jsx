@@ -9,7 +9,7 @@ const formatNumber = (num) => {
   }).replace(/\./g, ' ');
 };
 
-export function TopEntidadesConsumo({ año, unidad = 'kW' }) {
+export function TopEntidadesConsumo({ año, unidad = 'kWh' }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,7 +35,10 @@ export function TopEntidadesConsumo({ año, unidad = 'kW' }) {
   if (error) return <div className="text-center py-4 text-red-600">{error}</div>;
   if (!data.length) return <div className="text-center py-4 text-gray-900">No hay datos para el año {año}.</div>;
 
-  const unidadLabel = unidad === 'MW' ? 'MW' : 'kW';
+  let unidadLabel = 'kWh';
+  if (unidad === 'MWh') unidadLabel = 'MWh';
+  else if (unidad === 'GWh') unidadLabel = 'GWh';
+  else unidadLabel = 'kWh';
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 max-w-4xl mx-auto mt-8">

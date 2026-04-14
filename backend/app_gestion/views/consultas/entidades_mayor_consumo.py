@@ -11,7 +11,7 @@ class TopEntidadesConsumoView(APIView):
     Endpoint para las 10 entidades de mayor consumo en un año VISUAL.
     Parámetros:
         - anio (en URL): año visual.
-        - unidad (query): 'kW' (default) o 'MW'.
+        - unidad (query): 'kWh', 'MWh' o 'GWh' (por defecto 'kWh').
     """
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -25,9 +25,9 @@ class TopEntidadesConsumoView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        unidad = request.query_params.get('unidad', 'kW').upper()
-        if unidad not in ('KW', 'MW'):
-            unidad = 'MW'
+        unidad = request.query_params.get('unidad', 'kWh').upper()
+        if unidad not in ('KWH', 'MWH', 'GWH'):
+            unidad = 'KWH'
 
         condicion = Q(año=anio, mes__gte=2, mes__lte=12) | Q(año=anio + 1, mes=1)
 
@@ -41,8 +41,13 @@ class TopEntidadesConsumoView(APIView):
 
         data = []
         for item in resultados:
-            total_kw = item['consumo_total'] or 0
-            total = total_kw / 1000.0 if unidad == 'MW' else total_kw
+            total_kwh = item['consumo_total'] or 0
+            if unidad == 'MWH':
+                total = total_kwh / 1000.0
+            elif unidad == 'GWH':
+                total = total_kwh / 1000000.0
+            else:
+                total = total_kwh
             data.append({
                 "nombre": item['servicio__entidad__nombre'],
                 "codigo_reeup": item['servicio__entidad__codigo_REEUP'],

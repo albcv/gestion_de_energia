@@ -12,14 +12,14 @@ class ConsumoPorMesView(APIView):
     Endpoint para obtener el consumo por mes con desplazamiento hacia adelante.
     Parámetros:
         - anio (requerido): año visual.
-        - unidad (opcional): 'kW' (default) o 'MW'.
+        - unidad (opcional): 'kWh', 'MWh' o 'GWh' (por defecto 'kWh').
     """
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         año_param = request.query_params.get('anio')
-        unidad = request.query_params.get('unidad', 'kW').upper()
+        unidad = request.query_params.get('unidad', 'kWh').upper()
 
         if not año_param:
             return Response(
@@ -34,8 +34,8 @@ class ConsumoPorMesView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if unidad not in ('KW', 'MW'):
-            unidad = 'MW'
+        if unidad not in ('KWH', 'MWH', 'GWH'):
+            unidad = 'KWH'
 
         resultado = []
         for mes_visual in range(1, 13):
@@ -46,14 +46,19 @@ class ConsumoPorMesView(APIView):
                 año_real = año
                 mes_real = mes_visual + 1
 
-            total_kw = (
+            total_kwh = (
                 Portador_energetico_elec.objects
                 .filter(año=año_real, mes=mes_real)
                 .aggregate(total=Sum('consumo_real'))['total'] or 0
             )
 
             # Conversión según unidad
-            total = total_kw / 1000.0 if unidad == 'MW' else total_kw
+            if unidad == 'MWH':
+                total = total_kwh / 1000.0
+            elif unidad == 'GWH':
+                total = total_kwh / 1000000.0
+            else:
+                total = total_kwh
 
             resultado.append({
                 'mes': mes_visual,
