@@ -74,7 +74,7 @@ export function EntidadForm() {
   };
 
   const allFields = [
-    { name: 'nombre', label: 'Nombre', type: 'text', required: true, placeholder: 'Ingrese nombre' },
+    { name: 'nombre', label: 'Nombre', type: 'text', required: false, placeholder: 'Ingrese nombre' },
     { name: 'tipo', label: 'Tipo de entidad', type: 'select', required: true, options: tipoOptions },
     { name: 'codigo_REEUP', label: 'Código REEUP', type: 'text', required: true, placeholder: '211.0.06761' },
     { name: 'municipio', label: 'Municipio', type: 'select', required: true, options: municipioOptions },

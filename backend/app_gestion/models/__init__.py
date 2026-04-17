@@ -9,11 +9,11 @@ from .director import Director
 from .establecimiento import Establecimiento
 from .servicio_electrico import Servicio_electrico
 from .nae import NAE
-from .portador_energetico_elec import Portador_energetico_elec
+
 
 __all__ = [
     'Organismo', 'Sector_economico', 'Provincia', 'Municipio',
     'Entidad', 'Entidad_presupuestada', 'Entidad_empresarial',
     'Director', 'Establecimiento', 'Servicio_electrico',
-    'NAE', 'Portador_energetico_elec',
+    'NAE',
 ]

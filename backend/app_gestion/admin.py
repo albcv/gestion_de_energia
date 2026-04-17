@@ -3,7 +3,7 @@ from .models import (
     Organismo, Sector_economico, Provincia, Municipio,
     Entidad, Entidad_presupuestada, Entidad_empresarial,
     Director, Establecimiento, Servicio_electrico,
-    NAE, Portador_energetico_elec
+    NAE
 )
 
 
@@ -19,4 +19,4 @@ admin.site.register(Director)
 admin.site.register(Establecimiento)
 admin.site.register(Servicio_electrico)
 admin.site.register(NAE)
-admin.site.register(Portador_energetico_elec)
+

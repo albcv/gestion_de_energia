@@ -9,9 +9,7 @@ export function ServicioElectricoForm() {
   const [initialData, setInitialData] = useState(null);
   const [loadingInitial, setLoadingInitial] = useState(!!id);
 
-  // Si estamos en edición, obtener la entidad para preselección (aunque getItemWithLabel lo hará, pero necesitamos el nombre)
-  // Realmente no es necesario, porque getItemWithLabel transformará el campo entidad usando entidad_nombre.
-  // Así que podemos dejar que CrudForm cargue el item mediante getItemWithLabel.
+  
 
   const getItemWithLabel = async (id) => {
     const data = await getServicioElectricoById(id);

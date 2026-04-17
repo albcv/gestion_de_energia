@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum
-from ...models import Portador_energetico_elec
 import calendar
+from ...models import Servicio_electrico
 
 class ConsumoPorMesView(APIView):
     """
@@ -39,6 +39,8 @@ class ConsumoPorMesView(APIView):
 
         resultado = []
         for mes_visual in range(1, 13):
+            # Desplazamiento: mes visual 1 corresponde a mes real 2 del año visual
+            # mes visual 12 corresponde a mes real 1 del año siguiente
             if mes_visual == 12:
                 año_real = año + 1
                 mes_real = 1
@@ -47,7 +49,7 @@ class ConsumoPorMesView(APIView):
                 mes_real = mes_visual + 1
 
             total_kwh = (
-                Portador_energetico_elec.objects
+                Servicio_electrico.objects
                 .filter(año=año_real, mes=mes_real)
                 .aggregate(total=Sum('consumo_real'))['total'] or 0
             )

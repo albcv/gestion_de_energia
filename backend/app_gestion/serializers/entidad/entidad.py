@@ -57,7 +57,20 @@ class EntidadSerializer(TimeStampedSerializer):
         }
     )
 
-    # Campos opcionales con unicidad
+     # Campos opcionales con unicidad
+    nombre = serializers.CharField(
+        max_length=20,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        validators=[
+            UniqueValidator(
+                queryset=Entidad.objects.all(),
+                message="Este nombre ya está registrado en otra entidad."
+            )
+        ]
+    )
+
     siglas = serializers.CharField(
         max_length=20,
         required=False,

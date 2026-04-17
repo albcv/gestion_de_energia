@@ -4,7 +4,7 @@ import freImg from '../img/FRE.jpg';
 import energyImg from '../img/energy.avif';
 import { ConsumoAnualChart } from '../components/ConsumoAnualChart';
 import { TopEntidadesConsumo } from '../components/TopEntidadesConsumo';
-import { getAniosDisponibles } from '../api/crud_modelos/portador_energetico_elec';
+import { getAñosDisponibles } from '../api/crud_modelos/servicio_electrico.js';
 
 export function Inicio() {
   const [selectedYear, setSelectedYear] = useState(null);
@@ -15,7 +15,7 @@ export function Inicio() {
   useEffect(() => {
     const fetchYears = async () => {
       try {
-        const años = await getAniosDisponibles();
+        const años = await getAñosDisponibles();
         setYears(años);
         if (años.length > 0) {
           setSelectedYear(años[0]);

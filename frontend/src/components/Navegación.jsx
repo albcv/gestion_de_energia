@@ -29,7 +29,7 @@ export function Navegación() {
       title: "Energía eléctrica",
       items: [
         { name: 'Servicio eléctrico', path: '/gestionar/servicio-electrico' },
-        { name: 'Portador energético', path: '/gestionar/portador_energetico_elec' },
+     
       ]
     },
     {

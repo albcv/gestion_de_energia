@@ -20,7 +20,7 @@ class Establecimiento(TimeStampedModel):
     )
 
     municipio = models.ForeignKey('app_gestion.Municipio',
-        on_delete=models.PROTECT,  # No se puede eliminar un municipio con establecimientos
+        on_delete=models.PROTECT,  
         related_name='establecimientos',
         verbose_name="Municipio"
     )

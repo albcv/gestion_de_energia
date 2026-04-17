@@ -10,12 +10,10 @@ from .municipio_views import MunicipioViewSet
 from .provincia_views import ProvinciaViewSet
 from .servicio_electrico_views import ServicioElectricoViewSet
 from .nae_views import NAEViewSet
-from .portador_energetico_elec_views import PortadorEnergeticoElecViewSet
 from .consultas.consumo_por_mes import ConsumoPorMesView
 from .consultas.entidades_mayor_consumo import TopEntidadesConsumoView
 __all__ = [
     'NAEViewSet',
-    'PortadorEnergeticoElecViewSet',
     'login',
     'register',
     'logout',

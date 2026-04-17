@@ -59,7 +59,10 @@ export function TopEntidadesConsumo({ año, unidad = 'kWh' }) {
             {data.map((item, index) => (
               <tr key={item.codigo_reeup} className="border-t border-gray-200 hover:bg-gray-50">
                 <td className="px-4 py-2">{index + 1}</td>
-                <td className="px-4 py-2">{item.nombre}</td>
+                <td className="px-4 py-2">
+                   {item.nombre && item.nombre.trim() !== '' ? item.nombre : 'Desconocido'}
+                  
+                  </td>
                 <td className="px-4 py-2">{item.codigo_reeup}</td>
                 <td className="px-4 py-2 text-right font-semibold text-red-700">{formatNumber(item.consumo_total)}</td>
               </tr>

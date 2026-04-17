@@ -10,12 +10,11 @@ from .municipio import MunicipioSerializer
 from .provincia import ProvinciaSerializer
 from .servicio_electrico import ServicioElectricoSerializer
 from .nae import NAESerializer
-from .portador_energetico_elec import PortadorEnergeticoElecSerializer
+
 
 
 __all__ = [
     'NAESerializer',
-    'PortadorEnergeticoElecSerializer',
     'UserSerializer',
     'OrganismoSerializer',
     'EntidadSerializer',

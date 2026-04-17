@@ -37,14 +37,6 @@ import { ServicioElectricoIndex } from './pages/gestionar/servicio_electrico';
 import { ServicioElectricoForm } from './pages/gestionar/servicio_electrico/formulario';
 import { ServicioElectricoDetail } from './pages/gestionar/servicio_electrico/ver';
 
-import { PortadorEnergeticoElecIndex } from './pages/gestionar/portador_energetico_elec';
-import { PortadorEnergeticoElecForm } from './pages/gestionar/portador_energetico_elec/formulario';
-import { PortadorEnergeticoElecDetail } from './pages/gestionar/portador_energetico_elec/ver';
-
-import { UnidadMedidaIndex } from './pages/gestionar/unidad_medida';
-import { UnidadMedidaForm } from './pages/gestionar/unidad_medida/formulario';
-import { UnidadMedidaDetail } from './pages/gestionar/unidad_medida/ver';
-
 import { NAEIndex } from './pages/gestionar/nae';
 import { NAEForm } from './pages/gestionar/nae/formulario';
 import { NAEDetail } from './pages/gestionar/nae/ver';
@@ -124,18 +116,6 @@ function AppContent() {
         <Route path='/gestionar/servicio-electrico/crear' element={<PrivateRoute><ServicioElectricoForm /></PrivateRoute>} />
         <Route path='/gestionar/servicio-electrico/editar/:id' element={<PrivateRoute><ServicioElectricoForm /></PrivateRoute>} />
         <Route path='/gestionar/servicio-electrico/ver/:id' element={<PrivateRoute><ServicioElectricoDetail /></PrivateRoute>} />
-
-        {/* Gestión de Portadores energéticos */}
-        <Route path='/gestionar/portador_energetico_elec' element={<PrivateRoute><PortadorEnergeticoElecIndex /></PrivateRoute>} />
-        <Route path='/gestionar/portador_energetico_elec/crear' element={<PrivateRoute><PortadorEnergeticoElecForm /></PrivateRoute>} />
-        <Route path='/gestionar/portador_energetico_elec/editar/:id' element={<PrivateRoute><PortadorEnergeticoElecForm /></PrivateRoute>} />
-        <Route path='/gestionar/portador_energetico_elec/ver/:id' element={<PrivateRoute><PortadorEnergeticoElecDetail /></PrivateRoute>} />
-
-        {/* Gestión de Unidades de Medida */}
-        <Route path='/gestionar/unidad_medida' element={<PrivateRoute><UnidadMedidaIndex /></PrivateRoute>} />
-        <Route path='/gestionar/unidad_medida/crear' element={<PrivateRoute><UnidadMedidaForm /></PrivateRoute>} />
-        <Route path='/gestionar/unidad_medida/editar/:id' element={<PrivateRoute><UnidadMedidaForm /></PrivateRoute>} />
-        <Route path='/gestionar/unidad_medida/ver/:id' element={<PrivateRoute><UnidadMedidaDetail /></PrivateRoute>} />
 
         {/* Gestión de NAE */}
         <Route path='/gestionar/nae' element={<PrivateRoute><NAEIndex /></PrivateRoute>} />

@@ -56,7 +56,12 @@ export function EntidadIndex() {
     setLoading(true);
     try {
       const result = await getAllEntidad(currentPage, filters);
-      setData(result.results || []);
+      // Transformar los datos: si 'nombre' es null/undefined/vacío, mostrar "DESCONOCIDO"
+      const transformedResults = (result.results || []).map(item => ({
+        ...item,
+        nombre: item?.nombre ? item.nombre : 'DESCONOCIDO'
+      }));
+      setData(transformedResults);
       setTotalCount(result.count || 0);
       setTotalPages(Math.ceil((result.count || 0) / 100));
     } catch (error) {

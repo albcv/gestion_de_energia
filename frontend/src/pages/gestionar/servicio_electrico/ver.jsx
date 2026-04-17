@@ -3,6 +3,9 @@ import { getServicioElectricoById, deleteServicioElectrico } from '../../../api/
 
 const fields = [
   { key: 'codigo_servicio', label: 'Código' },
+  { key: 'mes_nombre', label: 'Mes' },
+  { key: 'año', label: 'Año' },
+  { key: 'consumo_real', label: 'Consumo real (kWh)' },
   { key: 'tarifa_contratada', label: 'Tarifa contratada' },
   { key: 'demanda_contratada', label: 'Demanda contratada' },
   { key: 'regimen_trabajo', label: 'Régimen de trabajo' },

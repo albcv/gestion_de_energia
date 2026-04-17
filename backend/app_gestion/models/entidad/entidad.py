@@ -3,7 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 class Entidad(TimeStampedModel):
-    nombre = models.CharField(max_length=200, unique=True, verbose_name="Nombre")
+    nombre = models.CharField(max_length=200, verbose_name="Nombre", null=True, blank=True)
     siglas = models.CharField(max_length=20, verbose_name="Siglas", null=True, blank=True)
     telefono = models.CharField(max_length=20, verbose_name="Teléfono", null=True, blank=True)
     cuenta_bancaria = models.CharField(max_length=16, verbose_name="Cuenta bancaria", null=True, blank=True)

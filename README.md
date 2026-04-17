@@ -5,9 +5,9 @@ Plataforma web para la gestión integral de la estrategia de desarrollo energét
 ## 🚀 Características principales
 
 - **Autenticación de usuarios** con tokens (registro, login, logout, perfil).
-- **Gestión completa de entidades** (empresariales/presupuestadas), organismos, directores, establecimientos, servicios eléctricos, portadores energéticos, provincias y municipios.
+- **Gestión completa de entidades** (empresariales/presupuestadas), organismos, directores, establecimientos, servicios eléctricos, provincias y municipios.
 - **Búsqueda en tiempo real** con autocompletado (`react-select/async`) y filtros múltiples en listados.
-- **Paginación del lado del servidor** para manejar grandes volúmenes de datos (ej. 18.000+ portadores energéticos).
+- **Paginación del lado del servidor** para manejar grandes volúmenes de datos.
 - **Gráfico de consumo anual** (barras) usando Recharts.
 - **Notificaciones visuales** con `react-hot-toast`.
 - **Diseño responsive** con Tailwind CSS (colores amarillo‑rojo).
@@ -61,7 +61,6 @@ app_gestion/
 | CRUD   | `/organismo/` | Gestión de organismos |
 | CRUD   | `/entidades/` | Gestión de entidades  |
 | CRUD   | `/servicios-electricos/` | Gestión de servicios eléctricos |
-| CRUD   | `/portadores-energeticos/` | Gestión de portadores energéticos |
 | GET    | `/consultas/consumo-por-mes/` | Datos agregados para el gráfico anual |
 
 
@@ -118,12 +117,6 @@ app_gestion/
 **Gestionar servicios eléctricos**
 
 <img src="img/gestionar_servicios_electricos.png" alt="Vista de gestión de servicios eléctricos">
-
-<br>
-
-**Gestionar portadores energéticos**
-
-<img src="img/gestionar_portadores_energéticos.png" alt="Vista de gestión de portadores energéticos">
 
 <br>
 

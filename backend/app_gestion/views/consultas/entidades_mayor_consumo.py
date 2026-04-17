@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum, Q
-from ...models import Portador_energetico_elec
+from ...models import Servicio_electrico
 
 class TopEntidadesConsumoView(APIView):
     """
@@ -29,12 +29,15 @@ class TopEntidadesConsumoView(APIView):
         if unidad not in ('KWH', 'MWH', 'GWH'):
             unidad = 'KWH'
 
+        # Condición: meses reales del período visual:
+        # - Meses 2 a 12 del año visual
+        # - Mes 1 del año siguiente
         condicion = Q(año=anio, mes__gte=2, mes__lte=12) | Q(año=anio + 1, mes=1)
 
         resultados = (
-            Portador_energetico_elec.objects
+            Servicio_electrico.objects
             .filter(condicion)
-            .values('servicio__entidad__nombre', 'servicio__entidad__codigo_REEUP')
+            .values('entidad__nombre', 'entidad__codigo_REEUP')
             .annotate(consumo_total=Sum('consumo_real'))
             .order_by('-consumo_total')[:10]
         )
@@ -49,8 +52,8 @@ class TopEntidadesConsumoView(APIView):
             else:
                 total = total_kwh
             data.append({
-                "nombre": item['servicio__entidad__nombre'],
-                "codigo_reeup": item['servicio__entidad__codigo_REEUP'],
+                "nombre": item['entidad__nombre'],
+                "codigo_reeup": item['entidad__codigo_REEUP'],
                 "consumo_total": total
             })
 
