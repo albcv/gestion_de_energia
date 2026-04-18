@@ -4,8 +4,6 @@ from .entidad_views.entidad_views import EntidadViewSet
 from .entidad_views.entidad_empresarial_views import EntidadEmpresarialViewSet
 from .entidad_views.entidad_presupuestada_views import EntidadPresupuestadaViewSet
 from .director_views import DirectorViewSet
-from .sector_economico_views import SectorEconomicoViewSet
-from .establecimiento_views import EstablecimientoViewSet
 from .municipio_views import MunicipioViewSet
 from .provincia_views import ProvinciaViewSet
 from .servicio_electrico_views import ServicioElectricoViewSet
@@ -24,8 +22,6 @@ __all__ = [
     'EntidadEmpresarialViewSet',
     'EntidadPresupuestadaViewSet',
     'DirectorViewSet',
-    'SectorEconomicoViewSet',
-    'EstablecimientoViewSet',
     'MunicipioViewSet',
     'ProvinciaViewSet',
     'ServicioElectricoViewSet',

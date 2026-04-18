@@ -21,7 +21,6 @@ export function Navegación() {
       items: [
         { name: 'Organismo', path: '/gestionar/organismo' },
         { name: 'Entidad', path: '/gestionar/entidad' },
-        { name: 'Establecimiento', path: '/gestionar/establecimiento' },
         { name: 'NAE', path: '/gestionar/nae' },
       ]
     },

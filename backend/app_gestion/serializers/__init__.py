@@ -4,8 +4,6 @@ from .entidad.entidad import EntidadSerializer
 from .entidad.entidad_empresarial import EntidadEmpresarialSerializer
 from .entidad.entidad_presupuestada import EntidadPresupuestadaSerializer
 from .director import DirectorSerializer
-from .sector_economico import SectorEconomicoSerializer
-from .establecimiento import EstablecimientoSerializer
 from .municipio import MunicipioSerializer
 from .provincia import ProvinciaSerializer
 from .servicio_electrico import ServicioElectricoSerializer
@@ -21,8 +19,6 @@ __all__ = [
     'EntidadEmpresarialSerializer',
     'EntidadPresupuestadaSerializer',
     'DirectorSerializer',
-    'SectorEconomicoSerializer',
-    'EstablecimientoSerializer',
     'MunicipioSerializer',
     'ProvinciaSerializer',
     'ServicioElectricoSerializer',

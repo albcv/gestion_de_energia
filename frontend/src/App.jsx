@@ -29,10 +29,6 @@ import { DirectorIndex } from './pages/gestionar/director';
 import { DirectorForm } from './pages/gestionar/director/formulario';
 import { DirectorDetail } from './pages/gestionar/director/ver';
 
-import { EstablecimientoIndex } from './pages/gestionar/establecimiento';
-import { EstablecimientoForm } from './pages/gestionar/establecimiento/formulario';
-import { EstablecimientoDetail } from './pages/gestionar/establecimiento/ver';
-
 import { ServicioElectricoIndex } from './pages/gestionar/servicio_electrico';
 import { ServicioElectricoForm } from './pages/gestionar/servicio_electrico/formulario';
 import { ServicioElectricoDetail } from './pages/gestionar/servicio_electrico/ver';
@@ -105,11 +101,6 @@ function AppContent() {
         <Route path='/gestionar/director/editar/:id' element={<PrivateRoute><DirectorForm /></PrivateRoute>} />
         <Route path='/gestionar/director/ver/:id' element={<PrivateRoute><DirectorDetail /></PrivateRoute>} />
 
-        {/* Gestión de Establecimientos */}
-        <Route path='/gestionar/establecimiento' element={<PrivateRoute><EstablecimientoIndex /></PrivateRoute>} />
-        <Route path='/gestionar/establecimiento/crear' element={<PrivateRoute><EstablecimientoForm /></PrivateRoute>} />
-        <Route path='/gestionar/establecimiento/editar/:id' element={<PrivateRoute><EstablecimientoForm /></PrivateRoute>} />
-        <Route path='/gestionar/establecimiento/ver/:id' element={<PrivateRoute><EstablecimientoDetail /></PrivateRoute>} />
 
         {/* Gestión de Servicios Eléctricos */}
         <Route path='/gestionar/servicio-electrico' element={<PrivateRoute><ServicioElectricoIndex /></PrivateRoute>} />
