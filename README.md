@@ -55,7 +55,6 @@ app_gestion/
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | POST   | `/login/` | Inicio de sesión (devuelve token) |
-| POST   | `/register/` | Registro de usuario |
 | POST   | `/logout/` | Cierre de sesión (elimina token) |
 | GET    | `/perfil/` | Datos del usuario autenticado |
 | CRUD   | `/organismo/` | Gestión de organismos |
