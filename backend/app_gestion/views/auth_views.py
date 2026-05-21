@@ -21,13 +21,18 @@ def login(request):
     serializer = UserSerializer(instance=user)
     
     response = Response({"user": serializer.data}, status=200)
+    
+    # Configuración condicional de la cookie según DEBUG
+    is_debug = settings.DEBUG
     response.set_cookie(
         key='auth_token',
         value=token.key,
         httponly=True,
-        secure=not settings.DEBUG,
-        samesite='Lax',
-        max_age=60 * 60 * 24 * 7,
+        secure=not is_debug,               # True en producción (requiere HTTPS)
+        samesite='None' if not is_debug else 'Lax',  # None para cross-origin en producción
+        max_age=60 * 60 * 24 * 7,          # 1 semana
+        path='/',
+        partitioned=True  
     )
     get_token(request)  
     return response
