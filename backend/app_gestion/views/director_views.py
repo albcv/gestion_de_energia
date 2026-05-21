@@ -1,12 +1,13 @@
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
+from ..authentication import CookieTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from ..models import Director
 from ..serializers import DirectorSerializer
 
+
 class DirectorViewSet(viewsets.ModelViewSet):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [CookieTokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = DirectorSerializer
 

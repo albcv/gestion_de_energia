@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
+from ..authentication import CookieTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -8,7 +8,7 @@ from ..models import Servicio_electrico
 from ..serializers import ServicioElectricoSerializer
 
 class ServicioElectricoViewSet(viewsets.ModelViewSet):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [CookieTokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = ServicioElectricoSerializer
 

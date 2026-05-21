@@ -1,11 +1,11 @@
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
+from ..authentication import CookieTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from ..models import Provincia
 from ..serializers import ProvinciaSerializer
 
 class ProvinciaViewSet(viewsets.ModelViewSet):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [CookieTokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = ProvinciaSerializer
 

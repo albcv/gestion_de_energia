@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
-import { getPerfil, cambiarPassword } from '../api/perfil';
+import { useNavigate } from 'react-router-dom';
+import { getPerfil, cambiarPassword, logoutUser } from '../api/auth';
+import { useAuth } from '../components/Auth';
 
 export function Perfil() {
+  const navigate = useNavigate();
+  const { user: authUser, logout, isAuthenticated } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -15,18 +19,30 @@ export function Perfil() {
   const [passwordSuccess, setPasswordSuccess] = useState('');
 
   useEffect(() => {
+    // Si no está autenticado, redirigir (aunque PrivateRoute ya lo hace)
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
     const fetchPerfil = async () => {
       try {
         const data = await getPerfil();
         setUserData(data);
       } catch (err) {
+        console.error('Error al cargar perfil:', err);
         setError('Error al cargar perfil');
+        // Si el error es 401 (no autorizado), cerramos sesión y redirigimos
+        if (err.response?.status === 401) {
+          logout();
+          navigate('/login');
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchPerfil();
-  }, []);
+  }, [isAuthenticated, navigate, logout]);
 
   const handlePasswordChange = (e) => {
     setPasswordForm({
@@ -58,7 +74,22 @@ export function Perfil() {
         setPasswordSuccess('');
       }, 2000);
     } catch (err) {
-      setPasswordError(err.message);
+      if (err.response?.data?.error) {
+        setPasswordError(err.response.data.error);
+      } else {
+        setPasswordError('Error al cambiar contraseña');
+      }
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error('Error al cerrar sesión', error);
+    } finally {
+      logout(); // Limpia el estado del contexto
+      navigate('/login');
     }
   };
 
@@ -102,6 +133,12 @@ export function Perfil() {
                       className="w-full text-left px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-300"
                     >
                       Cambiar Contraseña
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-3 bg-white border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors duration-300"
+                    >
+                      Cerrar Sesión
                     </button>
                   </div>
                 </div>

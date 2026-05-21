@@ -1,10 +1,13 @@
-// Login.jsx
-import { Link, useNavigate } from "react-router-dom";
+//Login.jsx
+
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { loginUser } from '../api/auth.js';
+import { loginUser } from '../api/auth';
+import { useAuth } from '../components/Auth';
 
 export function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -19,8 +22,8 @@ export function Login() {
     setLoading(true);
     try {
       const data = await loginUser(formData.username, formData.password);
-      localStorage.setItem('token', data.Token);
-      localStorage.setItem('user', JSON.stringify(data.Usuario));
+     
+      login(data.user);
       navigate('/inicio');
     } catch (err) {
       setError(err.message);
@@ -40,13 +43,11 @@ export function Login() {
     <div className="min-h-screen bg-gradient-to-br bg-yellow-200 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          {/* Header */}
           <div className="bg-gradient-to-r from-yellow-600 to-red-600 p-8 text-center">
             <h1 className="text-3xl font-bold text-white">Gestión de Energía ⚡</h1>
             <p className="text-blue-100 mt-2">Inicia sesión en tu cuenta</p>
           </div>
 
-          {/* Form */}
           <div className="p-8 bg-yellow-300">
             {error && (
               <div className="bg-yellow-300 border border-yellow-300 text-red-700 px-4 py-3 rounded mb-4">

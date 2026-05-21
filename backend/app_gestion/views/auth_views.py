@@ -1,101 +1,78 @@
-from rest_framework.decorators import api_view
+from django.conf import settings
+from django.middleware.csrf import get_token
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from ..serializers import UserSerializer
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from rest_framework import status
 from django.shortcuts import get_object_or_404
-
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
-
-
+from ..serializers import UserSerializer
+from ..authentication import CookieTokenAuthentication
 
 @api_view(['POST'])
+@authentication_classes([])          
+@permission_classes([AllowAny])      
 def login(request):
-
     user = get_object_or_404(User, username=request.data['username'])
-
     if not user.check_password(request.data['password']):
-        return Response({"Error": "Contraseña no válida"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"Error": "Contraseña no válida"}, status=400)
     
-    token, created = Token.objects.get_or_create(user=user)
+    token, _ = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(instance=user)
-
-    return Response({"Token": token.key, "Usuario": serializer.data}, status=status.HTTP_200_OK)
-
-
+    
+    response = Response({"user": serializer.data}, status=200)
+    response.set_cookie(
+        key='auth_token',
+        value=token.key,
+        httponly=True,
+        secure=not settings.DEBUG,
+        samesite='Lax',
+        max_age=60 * 60 * 24 * 7,
+    )
+    get_token(request)  
+    return response
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
+@authentication_classes([CookieTokenAuthentication])
 @permission_classes([IsAuthenticated])
 def logout(request):
-    # Eliminar el token del usuario
     request.user.auth_token.delete()
-    return Response({"message": "Sesión cerrada correctamente"}, status=status.HTTP_200_OK)
-
+    response = Response({"message": "Sesión cerrada"}, status=200)
+    response.delete_cookie('auth_token')
+    return response
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
+@authentication_classes([CookieTokenAuthentication])
 @permission_classes([IsAuthenticated])
 def perfil_usuario(request):
     user = request.user
-
     data = {
         'username': user.username,
         'email': user.email,
         'date_joined': user.date_joined.strftime('%Y-%m-%d'),
     }
-    return Response(data, status=status.HTTP_200_OK)
-
-
+    return Response(data, status=200)
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
+@authentication_classes([CookieTokenAuthentication])
 @permission_classes([IsAuthenticated])
 def cambiar_password(request):
     user = request.user
-    current_password = request.data.get('current_password')
-    new_password = request.data.get('new_password')
-
-    if not current_password or not new_password:
-        return Response({"error": "Faltan campos"}, status=status.HTTP_400_BAD_REQUEST)
-
-    if not user.check_password(current_password):
-        return Response({"error": "Contraseña actual incorrecta"}, status=status.HTTP_400_BAD_REQUEST)
-
-    if len(new_password) < 6:
-        return Response({"error": "La nueva contraseña debe tener al menos 6 caracteres"}, status=status.HTTP_400_BAD_REQUEST)
-
-    user.set_password(new_password)
+    current = request.data.get('current_password')
+    new = request.data.get('new_password')
+    if not current or not new:
+        return Response({"error": "Faltan campos"}, status=400)
+    if not user.check_password(current):
+        return Response({"error": "Contraseña actual incorrecta"}, status=400)
+    if len(new) < 6:
+        return Response({"error": "Mínimo 6 caracteres"}, status=400)
+    user.set_password(new)
     user.save()
-
-    return Response({"message": "Contraseña cambiada correctamente"}, status=status.HTTP_200_OK)
-
-
+    return Response({"message": "Contraseña cambiada"}, status=200)
 
 @api_view(['GET'])
-@authentication_classes([])  
-@permission_classes([])     
-def health_check(request):
-    """
-    OK
-    """
-    return Response({"status": "ok"}, status=200)
-
-
-
-@api_view(['GET'])
-@authentication_classes([])
-@permission_classes([])
-def keep_alive(request):
-    """
-    Endpoint para mantener la base de datos activa.
-    Ejecuta un SELECT mínimo a la base de datos.
-    """
-    from django.db import connection
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT 1;")
-        cursor.fetchone()
-    return Response({"status": "ok", "db": "alive"}, status=200)
+@authentication_classes([])          
+@permission_classes([AllowAny])      
+def set_csrf_cookie(request):
+    get_token(request)
+    return Response({"detail": "CSRF cookie establecida"}, status=200)

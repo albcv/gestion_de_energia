@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
+from ...authentication import CookieTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum, Q
 from ...models import Servicio_electrico
@@ -13,7 +13,7 @@ class TopEntidadesConsumoView(APIView):
         - anio (en URL): año visual.
         - unidad (query): 'kWh', 'MWh' o 'GWh' (por defecto 'kWh').
     """
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [CookieTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, anio):
