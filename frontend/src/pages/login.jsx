@@ -71,7 +71,7 @@ export function Login() {
                     required
                     value={formData.username}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 placeholder-slate-600"
                     placeholder="Ingresa tu usuario"
                   />
                 </div>
@@ -94,7 +94,7 @@ export function Login() {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="pl-10 pr-12 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="pl-10 pr-12 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 placeholder-slate-600"
                     placeholder="Ingresa tu contraseña"
                   />
                   <button
@@ -124,15 +124,6 @@ export function Login() {
               >
                 {loading ? 'Cargando...' : 'Iniciar Sesión'}
               </button>
-
-              <div className="text-center mt-6">
-                <p className="text-gray-900">
-                  ¿No tienes una cuenta?{' '}
-                  <Link to="/registro" className="font-medium text-blue-900 hover:text-blue-500">
-                    Regístrate aquí
-                  </Link>
-                </p>
-              </div>
             </form>
           </div>
         </div>

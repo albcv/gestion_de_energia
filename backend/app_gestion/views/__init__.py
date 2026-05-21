@@ -1,4 +1,4 @@
-from .auth_views import login, register, logout, perfil_usuario, cambiar_password
+from .auth_views import login, logout, perfil_usuario, cambiar_password
 from .organismo_views import OrganismoViewSet
 from .entidad_views.entidad_views import EntidadViewSet
 from .entidad_views.entidad_empresarial_views import EntidadEmpresarialViewSet
@@ -13,7 +13,6 @@ from .consultas.entidades_mayor_consumo import TopEntidadesConsumoView
 __all__ = [
     'NAEViewSet',
     'login',
-    'register',
     'logout',
     'perfil_usuario',
     'cambiar_password',
