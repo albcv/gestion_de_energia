@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Login } from './pages/login';
-import { Registro } from './pages/registro';
 import { Inicio } from './pages/inicio';
 import { Perfil } from './pages/perfil';
 import { Navegación } from './components/Navegación';
@@ -65,8 +64,7 @@ function AppContent() {
         {/* Rutas públicas */}
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/registro' element={<Registro />} />
-
+    
         {/* Rutas protegidas */}
         <Route path='/inicio' element={<PrivateRoute><Inicio /></PrivateRoute>} />
         <Route path='/perfil' element={<PrivateRoute><Perfil /></PrivateRoute>} />
