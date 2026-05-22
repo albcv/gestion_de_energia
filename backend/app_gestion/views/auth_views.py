@@ -13,26 +13,34 @@ from ..authentication import CookieTokenAuthentication
 @authentication_classes([])          
 @permission_classes([AllowAny])      
 def login(request):
-    user = get_object_or_404(User, username=request.data['username'])
-    if not user.check_password(request.data['password']):
-        return Response({"Error": "Contraseña no válida"}, status=400)
+    username = request.data.get('username')
+    password = request.data.get('password')
+    
+    if not username or not password:
+        return Response({"error": "Usuario y contraseña requeridos"}, status=400)
+    
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"error": "Usuario no encontrado"}, status=404)
+    
+    if not user.check_password(password):
+        return Response({"error": "Contraseña incorrecta"}, status=400)
     
     token, _ = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(instance=user)
     
     response = Response({"user": serializer.data}, status=200)
     
-    # Configuración condicional de la cookie según DEBUG
     is_debug = settings.DEBUG
     response.set_cookie(
         key='auth_token',
         value=token.key,
         httponly=True,
-        secure=not is_debug,               # True en producción (requiere HTTPS)
-        samesite='None' if not is_debug else 'Lax',  # None para cross-origin en producción
-        max_age=60 * 60 * 24 * 7,          # 1 semana
+        secure=not is_debug,
+        samesite='None' if not is_debug else 'Lax',
+        max_age=60 * 60 * 24 * 7,
         path='/',
-       
     )
     get_token(request)  
     return response

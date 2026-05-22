@@ -1,5 +1,3 @@
-//Login.jsx
-
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { loginUser } from '../api/auth';
@@ -22,11 +20,12 @@ export function Login() {
     setLoading(true);
     try {
       const data = await loginUser(formData.username, formData.password);
-     
       login(data.user);
       navigate('/inicio');
     } catch (err) {
-      setError(err.message);
+      // Extraer el mensaje de error enviado por el backend
+      const errorMsg = err.response?.data?.error || err.message;
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
