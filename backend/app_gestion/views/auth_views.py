@@ -32,7 +32,7 @@ def login(request):
         samesite='None' if not is_debug else 'Lax',  # None para cross-origin en producción
         max_age=60 * 60 * 24 * 7,          # 1 semana
         path='/',
-        partitioned=True  
+       
     )
     get_token(request)  
     return response
