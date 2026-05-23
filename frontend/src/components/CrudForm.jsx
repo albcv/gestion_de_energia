@@ -1,5 +1,5 @@
-import { useForm, Controller } from 'react-hook-form';
-import { useEffect } from 'react';
+import { useForm, Controller, useWatch } from 'react-hook-form';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Select from 'react-select';
@@ -21,6 +21,13 @@ export function CrudForm({
   const navigate = useNavigate();
   const params = useParams();
   const isEditing = !!params.id;
+  const formValues = useWatch({ control });
+  const submitAction = useRef('save'); // 'save' o 'saveAndContinue'
+
+  // Al montar el componente, scroll al principio
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     if (isEditing) {
@@ -40,7 +47,7 @@ export function CrudForm({
     }
   };
 
-  const onSubmit = handleSubmit(async (data) => {
+  const performSave = async (data, stay) => {
     const processedData = { ...data };
 
     fields.forEach(field => {
@@ -74,11 +81,17 @@ export function CrudForm({
       if (isEditing) {
         await updateItem(params.id, processedData);
         toast.success(`${itemName} actualizado correctamente`);
+        navigate(basePath);
       } else {
         await createItem(processedData);
         toast.success(`${itemName} creado correctamente`);
+        if (stay) {
+          // Guardar y seguir creando -> recargar la página (como el admin de Django)
+          setTimeout(() => window.location.reload(), 500);
+        } else {
+          navigate(basePath);
+        }
       }
-      navigate(basePath);
     } catch (error) {
       console.error(`Error guardando ${itemName}:`, error);
       if (error.response && error.response.data) {
@@ -102,7 +115,20 @@ export function CrudForm({
         toast.error('Error al guardar');
       }
     }
+  };
+
+  const onSubmit = handleSubmit(async (data) => {
+    const stay = submitAction.current === 'saveAndContinue';
+    await performSave(data, stay);
   });
+
+  const handleSave = () => {
+    submitAction.current = 'save';
+  };
+
+  const handleSaveAndContinue = () => {
+    submitAction.current = 'saveAndContinue';
+  };
 
   const handleDelete = async () => {
     if (window.confirm(`¿Está seguro de eliminar este ${itemName}?`)) {
@@ -224,12 +250,32 @@ export function CrudForm({
                       Eliminar
                     </button>
                   )}
-                  <button
-                    type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-red-600 text-white rounded-lg hover:from-yellow-700 hover:to-red-700 transition-all"
-                  >
-                    {isEditing ? 'Actualizar' : 'Guardar'}
-                  </button>
+                  {isEditing ? (
+                    <button
+                      type="submit"
+                      onClick={handleSave}
+                      className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-red-600 text-white rounded-lg hover:from-yellow-700 hover:to-red-700 transition-all"
+                    >
+                      Actualizar
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        type="submit"
+                        onClick={handleSave}
+                        className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-red-600 text-white rounded-lg hover:from-yellow-700 hover:to-red-700 transition-all"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        type="submit"
+                        onClick={handleSaveAndContinue}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+                      >
+                        Guardar y seguir creando
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </form>
