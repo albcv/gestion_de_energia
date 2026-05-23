@@ -64,9 +64,39 @@ export const searchEntidad = async (searchTerm) => {
     if (searchTerm) params.append('search', searchTerm);
     const response = await axios.get(`${URL}?${params.toString()}`);
     const data = response.data.results || response.data;
-    return data.map(e => ({ value: e.id, label: e.nombre }));
+    return data.map(e => ({
+      value: e.id,
+      label: `${e.nombre || 'Sin nombre'} (${e.codigo_REEUP})`
+    }));
   } catch (error) {
     console.error('Error al buscar entidades:', error);
     return [];
   }
+};
+
+export const getServiciosElectricosByEntidad = async (entidadId) => {
+  const response = await axios.get(`/entidades/${entidadId}/servicios-electricos/`);
+  return response.data;
+};
+
+export const getConsumoPorMesEntidad = async (entidadId, anio, unidad = 'kWh') => {
+  const response = await axios.get(`/entidades/${entidadId}/consumo-por-mes/`, { params: { anio, unidad } });
+  return response.data;
+};
+
+
+export const getEntidadesSinServicio = async () => {
+  const response = await axios.get('/entidades/sin_servicio/');
+  return response.data;
+};
+
+export const getEntidadesSinNombre = async () => {
+  const response = await axios.get('/entidades/sin_nombre/');
+  return response.data;
+};
+
+
+export const getAniosDisponiblesEntidad = async (entidadId) => {
+  const response = await axios.get(`/entidades/${entidadId}/anios-disponibles/`);
+  return response.data;
 };

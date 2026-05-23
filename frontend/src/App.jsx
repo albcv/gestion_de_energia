@@ -8,6 +8,7 @@ import { Perfil } from './pages/perfil';
 import { Navegación } from './components/Navegación';
 import { PrivateRoute } from './components/PrivateRoute';
 import { AuthProvider, useAuth } from './components/Auth';
+import { Consultas } from './pages/consultas';
 
 // Gestión de Organismo
 import { OrganismoIndex } from './pages/gestionar/organismo';
@@ -69,6 +70,7 @@ function AppContent() {
 
         {/* Rutas protegidas */}
         <Route path="/inicio" element={<PrivateRoute><Inicio /></PrivateRoute>} />
+        <Route path="/consultas" element={<PrivateRoute><Consultas /></PrivateRoute>} />
         <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
 
         {/* Gestión de Organismo */}
