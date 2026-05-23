@@ -1,8 +1,6 @@
 from .user import UserSerializer
 from .organismo import OrganismoSerializer
-from .entidad.entidad import EntidadSerializer
-from .entidad.entidad_empresarial import EntidadEmpresarialSerializer
-from .entidad.entidad_presupuestada import EntidadPresupuestadaSerializer
+from .entidad import EntidadSerializer
 from .director import DirectorSerializer
 from .municipio import MunicipioSerializer
 from .provincia import ProvinciaSerializer
@@ -16,8 +14,6 @@ __all__ = [
     'UserSerializer',
     'OrganismoSerializer',
     'EntidadSerializer',
-    'EntidadEmpresarialSerializer',
-    'EntidadPresupuestadaSerializer',
     'DirectorSerializer',
     'MunicipioSerializer',
     'ProvinciaSerializer',

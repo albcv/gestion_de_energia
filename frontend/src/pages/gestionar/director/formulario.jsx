@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { CrudForm } from '../../../components/CrudForm';
 import { getDirectorById, createDirector, updateDirector, deleteDirector } from '../../../api/crud_modelos/director';
-import { searchEntidad, getEntidadById } from '../../../api/crud_modelos/entidad/entidad.js';
+import { searchEntidad, getEntidadById } from '../../../api/crud_modelos/entidad.js';
 
 export function DirectorForm() {
   const { id } = useParams();

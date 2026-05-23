@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CrudForm } from '../../../components/CrudForm';
-import { getEntidadById, deleteEntidad } from '../../../api/crud_modelos/entidad/entidad.js';
-import { createEntidadPresupuestada, updateEntidadPresupuestada } from '../../../api/crud_modelos/entidad/entidad_presupuestada';
-import { createEntidadEmpresarial, updateEntidadEmpresarial } from '../../../api/crud_modelos/entidad/entidad_empresarial';
+import { 
+  getEntidadById, 
+  deleteEntidad, 
+  createEntidad, 
+  updateEntidad 
+} from '../../../api/crud_modelos/entidad.js';
 import { searchNAE } from '../../../api/crud_modelos/nae';
 import { getAllMunicipio } from '../../../api/crud_modelos/municipio';
 import { toast } from 'react-hot-toast';
 
 export function EntidadForm() {
   const { id } = useParams();
- 
+
   const [municipioOptions, setMunicipioOptions] = useState([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [tipoOptions] = useState([
@@ -24,12 +27,11 @@ export function EntidadForm() {
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const [municipioData] = await Promise.all([
-       
-          getAllMunicipio()
-        ]);
-      
-        setMunicipioOptions(municipioData.results.map(m => ({ value: m.id, label: `${m.nombre} (${m.provincia_nombre})` })));
+        const municipioData = await getAllMunicipio();
+        setMunicipioOptions(municipioData.results.map(m => ({ 
+          value: m.id, 
+          label: `${m.nombre} (${m.provincia_nombre})` 
+        })));
       } catch (error) {
         console.error('Error cargando opciones', error);
         toast.error('Error al cargar opciones');
@@ -78,7 +80,6 @@ export function EntidadForm() {
     { name: 'tipo', label: 'Tipo de entidad', type: 'select', required: true, options: tipoOptions },
     { name: 'codigo_REEUP', label: 'Código REEUP', type: 'text', required: true, placeholder: '211.0.06761' },
     { name: 'municipio', label: 'Municipio', type: 'select', required: true, options: municipioOptions },
-  
     { 
       name: 'nae', 
       label: 'NAE', 
@@ -87,30 +88,13 @@ export function EntidadForm() {
       loadOptions: searchNAE,
       placeholder: 'Buscar NAE por código o actividad...' 
     },
-   
     { name: 'siglas', label: 'Siglas', type: 'text', required: false, placeholder: 'Siglas (opcional)' },
     { name: 'cuenta_bancaria', label: 'Cuenta bancaria', type: 'text', required: false, placeholder: '16 dígitos' },
     { name: 'telefono', label: 'Teléfono', type: 'text', required: false, placeholder: 'Teléfono (opcional)' },
     { name: 'NIT', label: 'NIT', type: 'text', required: false, placeholder: 'NIT (opcional)' },
     { name: 'direccion', label: 'Dirección', type: 'text', required: false, placeholder: 'Dirección (opcional)' },
     { name: 'geolocalizacion', label: 'Geolocalización', type: 'text', required: false, placeholder: 'lat,lon (opcional)' },
-   
   ];
-
-  const getCreateFunction = (tipo) => {
-    return tipo === 'presupuestada' ? createEntidadPresupuestada : createEntidadEmpresarial;
-  };
-  const getUpdateFunction = (tipo) => {
-    return tipo === 'presupuestada' ? updateEntidadPresupuestada : updateEntidadEmpresarial;
-  };
-
-  const createItem = async (data) => {
-    await getCreateFunction(data.tipo)(data);
-  };
-
-  const updateItem = async (id, data) => {
-    await getUpdateFunction(data.tipo)(id, data);
-  };
 
   if (loadingOptions) {
     return <div className="text-center py-12">Cargando opciones...</div>;
@@ -123,8 +107,8 @@ export function EntidadForm() {
           title={id ? "Editar Entidad" : "Crear Entidad"}
           fields={allFields}
           getItem={getItemWithLabel}
-          createItem={createItem}
-          updateItem={updateItem}
+          createItem={createEntidad}
+          updateItem={updateEntidad}
           deleteItem={deleteEntidad}  
           basePath="/gestionar/entidad"
           itemName="Entidad"

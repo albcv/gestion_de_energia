@@ -1,16 +1,15 @@
-from ..base import TimeStampedSerializer
+from .base import TimeStampedSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.core.validators import RegexValidator
 from app_gestion.models import Entidad, Organismo
-from ..director import DirectorSerializer
+from .director import DirectorSerializer
 
 class EntidadSerializer(TimeStampedSerializer):
     
     nae_nombre = serializers.CharField(source='nae.actividad', read_only=True)
     nae_codigo = serializers.CharField(source='nae.codigo', read_only=True) 
     municipio_nombre = serializers.CharField(source='municipio.nombre', read_only=True)
-    tipo = serializers.SerializerMethodField()
     director = DirectorSerializer(read_only=True)
     organismo = serializers.SerializerMethodField()
     cuenta_bancaria_formateada = serializers.SerializerMethodField()
@@ -153,12 +152,6 @@ class EntidadSerializer(TimeStampedSerializer):
         model = Entidad
         fields = '__all__'
 
-    def get_tipo(self, obj):
-        if hasattr(obj, 'entidad_empresarial'):
-            return 'empresarial'
-        elif hasattr(obj, 'entidad_presupuestada'):
-            return 'presupuestada'
-        return None
 
     def get_organismo(self, obj):
         if obj.codigo_REEUP:

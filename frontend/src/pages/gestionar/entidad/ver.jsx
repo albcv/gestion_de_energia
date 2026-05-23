@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { CrudDetail } from '../../../components/CrudDetail';
-import { getEntidadById, deleteEntidad } from '../../../api/crud_modelos/entidad/entidad.js';
+import { getEntidadById, deleteEntidad } from '../../../api/crud_modelos/entidad.js';
 
 const fields = [
   { key: 'nombre', label: 'Nombre' },

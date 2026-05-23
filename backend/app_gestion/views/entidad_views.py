@@ -1,9 +1,10 @@
 from rest_framework import viewsets
-from ...authentication import CookieTokenAuthentication
+from ..authentication import CookieTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
-from ...models import Entidad
-from ...serializers import EntidadSerializer
+from ..models import Entidad
+from ..serializers import EntidadSerializer
+
 
 class EntidadViewSet(viewsets.ModelViewSet):
     authentication_classes = [CookieTokenAuthentication]
@@ -21,10 +22,7 @@ class EntidadViewSet(viewsets.ModelViewSet):
         if municipio:
             queryset = queryset.filter(municipio__nombre__icontains=municipio)
         if tipo:
-            if tipo == 'empresarial':
-                queryset = queryset.filter(entidad_empresarial__isnull=False)
-            elif tipo == 'presupuestada':
-                queryset = queryset.filter(entidad_presupuestada__isnull=False)
+            queryset = queryset.filter(tipo=tipo)
         if codigo_reeup:
             queryset = queryset.filter(codigo_REEUP__icontains=codigo_reeup)
         if organismo:
@@ -40,3 +38,7 @@ class EntidadViewSet(viewsets.ModelViewSet):
                 Q(municipio__nombre__icontains=search)
             )
         return queryset.order_by('municipio__nombre')
+
+
+
+  

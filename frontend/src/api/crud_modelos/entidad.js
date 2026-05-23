@@ -1,4 +1,4 @@
-import axios from '../../axios';
+import axios from '../axios';
 
 const URL = '/entidades/';
 
@@ -17,6 +17,7 @@ export const getAllEntidad = async (page = 1, filters = {}) => {
     throw error;
   }
 };
+
 export const getEntidadById = async (id) => {
   try {
     const response = await axios.get(`${URL}${id}/`);

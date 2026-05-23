@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { CrudForm } from '../../../components/CrudForm';
 import { getServicioElectricoById, createServicioElectrico, updateServicioElectrico, deleteServicioElectrico } from '../../../api/crud_modelos/servicio_electrico';
-import { searchEntidad, getEntidadById } from '../../../api/crud_modelos/entidad/entidad.js';
+import { searchEntidad, getEntidadById } from '../../../api/crud_modelos/entidad.js';
 
 export function ServicioElectricoForm() {
   const { id } = useParams();

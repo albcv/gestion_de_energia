@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CrudIndex } from '../../../components/CrudIndex';
-import { getAllEntidad, deleteEntidad } from '../../../api/crud_modelos/entidad/entidad';
+import { getAllEntidad, deleteEntidad } from '../../../api/crud_modelos/entidad';
 import { getAllMunicipio } from '../../../api/crud_modelos/municipio';
 import { searchOrganismo } from '../../../api/crud_modelos/organismo';
 import AsyncSelect from 'react-select/async';
@@ -56,7 +56,6 @@ export function EntidadIndex() {
     setLoading(true);
     try {
       const result = await getAllEntidad(currentPage, filters);
-      // Transformar los datos: si 'nombre' es null/undefined/vacío, mostrar "DESCONOCIDO"
       const transformedResults = (result.results || []).map(item => ({
         ...item,
         nombre: item?.nombre ? item.nombre : 'DESCONOCIDO'

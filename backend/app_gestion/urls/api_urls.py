@@ -4,7 +4,6 @@ from ..views import (
     OrganismoViewSet, EntidadViewSet, DirectorViewSet,
      MunicipioViewSet,
     ProvinciaViewSet, ServicioElectricoViewSet, 
-    EntidadEmpresarialViewSet, EntidadPresupuestadaViewSet,
     NAEViewSet
    
 )
@@ -12,8 +11,6 @@ from ..views import (
 router = DefaultRouter()
 router.register(r'organismo', OrganismoViewSet, basename='organismo')
 router.register(r'entidades', EntidadViewSet, basename='entidades')
-router.register(r'entidades_emp', EntidadEmpresarialViewSet, basename='entidades_emp')
-router.register(r'entidades_pre', EntidadPresupuestadaViewSet, basename='entidades_pre')
 router.register(r'directores', DirectorViewSet, basename='directores')
 router.register(r'municipios', MunicipioViewSet, basename='municipios')
 router.register(r'provincias', ProvinciaViewSet, basename='provincias')
