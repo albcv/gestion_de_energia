@@ -78,3 +78,15 @@ export const getAñosDisponibles = async () => {
   const response = await axios.get('/servicios-electricos/anios-disponibles/');
   return response.data;
 };
+
+
+export const importarServicioElectrico = async (file) => {
+  const formData = new FormData();
+  formData.append('archivo', file);
+  const response = await axios.post('/servicios-electricos/importar/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
+

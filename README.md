@@ -119,6 +119,18 @@ app_gestion/
 
 <br>
 
+**Importar archivo Excel de servicios eléctricos**
+
+<img src="img/importar_servicios.png" alt="Ventana para importar archivo Excel">
+
+<br>
+
+**Importando servicios eléctricos**
+
+<img src="img/importando_servicios.png" alt="Importando servicios eléctricos del archivo Excel">
+
+<br>
+
 **Gráfico de consumo energético**
 
 <img src="img/gráfico.png" alt="Gráfico de consumo energético">

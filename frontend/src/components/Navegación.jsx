@@ -66,6 +66,7 @@ export function Navegación() {
             {/* Navegación escritorio */}
             <div className="hidden md:flex items-center space-x-6">
               <Link to={'/inicio'} className="text-white hover:text-blue-200 py-2 px-3 rounded-lg hover:bg-white/20 transition-colors">Inicio</Link>
+              <Link to={'/consultas'} className="text-white hover:text-blue-200 py-2 px-3 rounded-lg hover:bg-white/20 transition-colors">Consultas</Link>
               <Link to={'/perfil'} className="text-white hover:text-blue-200 py-2 px-3 rounded-lg hover:bg-white/20 transition-colors">Perfil</Link>
               <button
                 onClick={handleLogout}
@@ -112,6 +113,14 @@ export function Navegación() {
                     className="text-white px-4 py-3 rounded-lg hover:bg-white/20 transition-colors"
                   >
                     Inicio
+                  </Link>
+
+                  <Link
+                    to={'/consultas'}
+                    onClick={closeMobileMenu}
+                    className="text-white px-4 py-3 rounded-lg hover:bg-white/20 transition-colors"
+                  >
+                    Consultas
                   </Link>
                  
                   <Link
