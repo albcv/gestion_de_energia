@@ -1,11 +1,11 @@
 # ⚡ Sistema de Gestión Energética
 
-Plataforma web para la gestión integral de la estrategia de desarrollo energético territorial. Desarrollada con Django REST Framework (backend) y React (frontend), facilita la administración de entidades, servicios eléctricos, portadores energéticos y otros recursos clave.
+Plataforma web para la gestión integral de la estrategia de desarrollo energético territorial. Desarrollada con Django REST Framework (backend) y React (frontend), facilita la administración de entidades y servicios eléctricos
 
 ## 🚀 Características principales
 
-- **Autenticación de usuarios** con tokens (registro, login, logout, perfil).
-- **Gestión completa de entidades** (empresariales/presupuestadas), organismos, directores, establecimientos, servicios eléctricos, provincias y municipios.
+- **Autenticación de usuarios** con tokens. 
+- **Gestión completa de entidades**, organismos, servicios eléctricos, provincias y municipios.
 - **Búsqueda en tiempo real** con autocompletado (`react-select/async`) y filtros múltiples en listados.
 - **Paginación del lado del servidor** para manejar grandes volúmenes de datos.
 - **Gráfico de consumo anual** (barras) usando Recharts.
