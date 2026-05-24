@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>REEUP faltantes</title>
+    <style>
+        body { font-family: sans-serif; margin: 2cm; }
+        h1 { color: #b91c1c; }
+        table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Entidades faltantes (Códigos REEUP)</h1>
+    <p>Generado el {{ fecha_generacion }}</p>
+    <p>Total de códigos no encontrados: {{ total }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Código REEUP</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reeup in reeup_faltantes %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ reeup }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

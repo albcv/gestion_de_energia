@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { CrudIndex } from '../../../components/CrudIndex';
 import { getAllServicioElectrico, deleteServicioElectrico, importarServicioElectrico } from '../../../api/crud_modelos/servicio_electrico';
 import { getAñosDisponibles } from '../../../api/crud_modelos/servicio_electrico';
+import axios from '../../../api/axios'; 
 
 const columns = [
   { key: 'codigo_servicio', label: 'Código' },
@@ -128,9 +129,7 @@ export function ServicioElectricoIndex() {
     try {
       const result = await importarServicioElectrico(importFile);
       setImportResult(result);
-      // Refrescar datos después de importar
-      fetchData();
-      // ✅ Ya no se cierra automáticamente; el usuario debe hacer clic en "Cerrar"
+      fetchData(); // Refrescar datos después de importar
     } catch (error) {
       console.error('Error importando:', error);
       setImportResult({ error: error.response?.data?.error || 'Error al importar' });
@@ -143,6 +142,29 @@ export function ServicioElectricoIndex() {
     setShowImportModal(false);
     setImportFile(null);
     setImportResult(null);
+  };
+
+  const exportMissingReeupPDF = async () => {
+    if (!importResult?.reeup_faltantes?.length) return;
+    try {
+      const response = await axios.post(
+        '/servicios-electricos/exportar-reeup-pdf/',
+        { reeup_faltantes: importResult.reeup_faltantes },
+        { responseType: 'blob' }
+      );
+      // Crear un enlace temporal para descargar el blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `reeup_faltantes_${new Date().toISOString().slice(0, 19)}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      alert('No se pudo generar el PDF');
+    }
   };
 
   return (
@@ -258,13 +280,24 @@ export function ServicioElectricoIndex() {
                     <p>🔄 Duplicados: {importResult.duplicados}</p>
                     <p>📄 Total procesados: {importResult.total_procesados}</p>
                     {importResult.reeup_faltantes?.length > 0 && (
-                      <p className="text-yellow-600">⚠️ REEUP faltantes: {importResult.reeup_faltantes.join(', ')}</p>
+                      <p className="text-yellow-600">
+                        ⚠️ REEUP faltantes: {importResult.reeup_faltantes.length} código(s) no encontrado(s)
+                      </p>
                     )}
                   </>
                 )}
               </div>
             )}
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-end gap-3 flex-wrap">
+              {importResult && !importResult.error && importResult.reeup_faltantes?.length > 0 && (
+                <button
+                  onClick={exportMissingReeupPDF}
+                  disabled={importing}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                >
+                  📄 Exportar PDF (REEUP faltantes)
+                </button>
+              )}
               <button
                 onClick={closeImportModal}
                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"

@@ -16,6 +16,12 @@ from django.db import transaction
 from django.core.files.uploadedfile import UploadedFile
 from ..models import Servicio_electrico, Entidad
 
+from weasyprint import HTML
+from datetime import datetime
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+
+
 class ServicioElectricoViewSet(viewsets.ModelViewSet):
     authentication_classes = [CookieTokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -339,6 +345,28 @@ class ServicioElectricoViewSet(viewsets.ModelViewSet):
                 'total_procesados': len(objetos),
                 'reeup_faltantes': list(reeup_faltantes)
             }, status=200)
+
+
+    @action(detail=False, methods=['post'], url_path='exportar-reeup-pdf')
+    def exportar_reeup_pdf(self, request):
+        """
+        Recibe una lista de códigos REEUP faltantes y genera un PDF.
+        Espera JSON: {"reeup_faltantes": ["131003768", ...]}
+        """
+        reeup_faltantes = request.data.get('reeup_faltantes', [])
+        if not reeup_faltantes:
+            return Response({"error": "No hay REEUP faltantes para exportar"}, status=400)
+
+        contexto = {
+            'reeup_faltantes': reeup_faltantes,
+            'total': len(reeup_faltantes),
+            'fecha_generacion': datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
+        }
+        html_string = render_to_string('reeup_faltantes_pdf.html', contexto)
+        pdf_file = HTML(string=html_string).write_pdf()
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="reeup_faltantes_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+        return response
 
 
 
