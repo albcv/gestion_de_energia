@@ -1,5 +1,6 @@
 // src/pages/consultas.jsx
 import { useState, useEffect, useCallback } from 'react';
+import axios from '../api/axios';   
 import AsyncSelect from 'react-select/async';
 import { getEntidadById, searchEntidad } from '../api/crud_modelos/entidad';
 import {
@@ -158,17 +159,30 @@ export function Consultas() {
     }
   };
 
-  const handleGeneratePDF = () => {
+  const handleGeneratePDF = async () => {
     if (!selectedConsulta || !hasQueried) return;
+
     const pdfUrl = getPdfReportUrl(
       selectedConsulta,
       selectedYear,
       selectedEntity?.value || '',
       unidad
     );
+
     setGeneratingPDF(true);
-    window.open(pdfUrl, '_blank');
-    setTimeout(() => setGeneratingPDF(false), 1000);
+    try {
+      // axios ya envía las cookies gracias a withCredentials: true
+      const response = await axios.get(pdfUrl, { responseType: 'blob' });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blobUrl = window.URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
+    } catch (error) {
+      console.error(error);
+      setError('No se pudo generar el PDF. Verifique su conexión o intente más tarde.');
+    } finally {
+      setGeneratingPDF(false);
+    }
   };
 
   const shouldShow = (value) => {
@@ -359,25 +373,22 @@ export function Consultas() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setUnidad('kWh')}
-                    className={`px-3 py-1 rounded-md transition ${
-                      unidad === 'kWh' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
+                    className={`px-3 py-1 rounded-md transition ${unidad === 'kWh' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
                   >
                     kWh
                   </button>
                   <button
                     onClick={() => setUnidad('MWh')}
-                    className={`px-3 py-1 rounded-md transition ${
-                      unidad === 'MWh' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
+                    className={`px-3 py-1 rounded-md transition ${unidad === 'MWh' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
                   >
                     MWh
                   </button>
                   <button
                     onClick={() => setUnidad('GWh')}
-                    className={`px-3 py-1 rounded-md transition ${
-                      unidad === 'GWh' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
+                    className={`px-3 py-1 rounded-md transition ${unidad === 'GWh' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
                   >
                     GWh
                   </button>
