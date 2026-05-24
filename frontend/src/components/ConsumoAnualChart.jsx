@@ -1,6 +1,7 @@
 // src/components/ConsumoAnualChart.jsx
 import { useState, useEffect } from 'react';
 import { getConsumoPorMes } from '../api/consultas.js';
+import { getConsumoPorMesEntidad } from '../api/crud_modelos/entidad.js'; // nueva importación
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
@@ -23,7 +24,7 @@ const yAxisFormat = (value) => {
   return value.toString();
 };
 
-export function ConsumoAnualChart({ año, unidad = 'kWh' }) {
+export function ConsumoAnualChart({ año, unidad = 'kWh', entityId = null, entidadNombre = null }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,7 +35,14 @@ export function ConsumoAnualChart({ año, unidad = 'kWh' }) {
       try {
         setLoading(true);
         setError(null);
-        const monthlyData = await getConsumoPorMes(año, unidad);
+        let monthlyData;
+        if (entityId) {
+          // Consulta para una entidad específica
+          monthlyData = await getConsumoPorMesEntidad(entityId, año, unidad);
+        } else {
+          // Consulta general (todas las entidades)
+          monthlyData = await getConsumoPorMes(año, unidad);
+        }
         setData(monthlyData);
         const total = monthlyData.reduce((acc, item) => acc + item.total, 0);
         setTotalPeriodo(total);
@@ -46,7 +54,7 @@ export function ConsumoAnualChart({ año, unidad = 'kWh' }) {
       }
     };
     fetchData();
-  }, [año, unidad]);
+  }, [año, unidad, entityId]);
 
   if (loading) return <div className="text-center py-12">Cargando datos...</div>;
   if (error) return <div className="text-center py-12 text-red-600">{error}</div>;
@@ -60,10 +68,16 @@ export function ConsumoAnualChart({ año, unidad = 'kWh' }) {
   else if (unidad === 'GWh') unidadLower = 'GWh';
   else unidadLower = 'kWh';
 
+  // Construir título dinámico
+  let titulo = `Consumo por mes en ${año}`;
+  if (entidadNombre) {
+    titulo = `Consumo por mes de ${entidadNombre} en ${año}`;
+  }
+
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
-        Consumo por mes en {año} ({unidadLower})
+        {titulo} ({unidadLower})
       </h2>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>

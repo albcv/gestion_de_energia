@@ -4,7 +4,6 @@ import AsyncSelect from 'react-select/async';
 import { getEntidadById, searchEntidad } from '../api/crud_modelos/entidad';
 import { 
   getServiciosElectricosByEntidad, 
-  getConsumoPorMesEntidad, 
   getAniosDisponiblesEntidad,
   getEntidadesSinServicio,
   getEntidadesSinNombre
@@ -30,7 +29,6 @@ export function Consultas() {
   const [selectedYear, setSelectedYear] = useState('');
   const [unidad, setUnidad] = useState('MWh');
 
-  // Función para limpiar todos los filtros y resultados
   const limpiarConsulta = () => {
     setSelectedConsulta('');
     setSelectedEntity(null);
@@ -42,7 +40,6 @@ export function Consultas() {
     setAvailableYears([]);
   };
 
-  // Limpiar resultado cuando cambia la consulta o la entidad
   useEffect(() => {
     setResultData(null);
     setHasQueried(false);
@@ -51,7 +48,6 @@ export function Consultas() {
     setSelectedYear('');
   }, [selectedConsulta, selectedEntity]);
 
-  // Cargar años disponibles cuando se selecciona una entidad y la consulta es "consumo"
   useEffect(() => {
     if (selectedConsulta === 'consumo' && selectedEntity) {
       const fetchYears = async () => {
