@@ -138,6 +138,19 @@ app_gestion/
 <br>
 
 
+**Consultas**
+
+<img src="img/consultas.png" alt="Página de consultas">
+<br>
+
+<img src="img/consultas_2.png" alt="Página de consultas">
+<br>
+
+
 **Modelo lógico de la aplicación**
 
 <img src="img/modelo_lógico.png" alt="Modelo lógico de la aplicación">
+<br>
+
+<img src="img/modelo_lógico2.png" alt="Modelo lógico de la aplicación">
+
