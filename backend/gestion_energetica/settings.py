@@ -173,6 +173,15 @@ REST_FRAMEWORK = {
 }
 
 
+BASE_DOMAIN = os.environ.get('BASE_DOMAIN')
+if BASE_DOMAIN:
+    # Se añade el punto para que funcione con todos los subdominios
+    SESSION_COOKIE_DOMAIN = f'.{BASE_DOMAIN}'
+    CSRF_COOKIE_DOMAIN = f'.{BASE_DOMAIN}'
+else:
+   
+    SESSION_COOKIE_DOMAIN = None
+    CSRF_COOKIE_DOMAIN = None
 
 
 
