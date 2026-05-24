@@ -9,7 +9,7 @@ class Servicio_electrico(TimeStampedModel):
     consumo_real = models.FloatField(verbose_name="Consumo real")
     tarifa_contratada = models.CharField(verbose_name="Tarifa contratada")
     demanda_contratada = models.FloatField(verbose_name="Demanda contratada")
-    regimen_trabajo = models.IntegerField(verbose_name="Régimen de trabajo")
+    regimen_trabajo = models.IntegerField(verbose_name="Régimen de trabajo", blank=True, null=True)
 
     entidad = models.ForeignKey(
         'app_gestion.Entidad',

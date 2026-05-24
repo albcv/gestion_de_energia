@@ -26,7 +26,7 @@ export function ServicioElectricoForm() {
     { name: 'codigo_servicio', label: 'Código de servicio', type: 'number', required: true, placeholder: 'Ej: 101' },
     { name: 'tarifa_contratada', label: 'Tarifa contratada', type: 'text', required: true, placeholder: 'Ej: M1A' },
     { name: 'demanda_contratada', label: 'Demanda contratada', type: 'number', required: true, placeholder: 'Ej: 100.5', step: 'any' },
-    { name: 'regimen_trabajo', label: 'Régimen de trabajo', type: 'number', required: true, placeholder: 'Ej: 1' },
+    { name: 'regimen_trabajo', label: 'Régimen de trabajo', type: 'number', required: false, placeholder: 'Ej: 1' },
     { 
       name: 'entidad', 
       label: 'Entidad', 

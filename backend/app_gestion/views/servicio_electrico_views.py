@@ -69,20 +69,22 @@ class ServicioElectricoViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'], url_path='importar', parser_classes=[MultiPartParser])
     def importar_excel(self, request):
-        """
-        Importa servicios eléctricos desde un archivo Excel (.xlsx, .xls) o CSV.
-        Espera un archivo en el campo 'archivo' del formulario.
-        """
         archivo: UploadedFile = request.FILES.get('archivo')
         if not archivo:
             return Response({'error': 'No se proporcionó ningún archivo'}, status=400)
 
-        # Detectar tipo y leer contenido
+        nombre_archivo = archivo.name.lower()
+        es_menor = 'menor' in nombre_archivo
+
         contenido = archivo.read()
+        # Limpiar posibles BOM al inicio
+        if contenido.startswith(b'\xef\xbb\xbf'):
+            contenido = contenido[3:]
+
         try:
             if archivo.name.endswith('.csv'):
                 import csv
-                data = csv.reader(io.StringIO(contenido.decode('utf-8')))
+                data = csv.reader(io.StringIO(contenido.decode('utf-8-sig')))
                 filas = list(data)
             else:
                 wb = openpyxl.load_workbook(io.BytesIO(contenido), data_only=True)
@@ -91,150 +93,252 @@ class ServicioElectricoViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': f'Error leyendo archivo: {str(e)}'}, status=400)
 
-        # Detectar primera fila de datos (con fecha '02/')
-        start_idx = None
-        for i, row in enumerate(filas):
-            if len(row) > 0 and row[0] and isinstance(row[0], str) and row[0].strip().startswith('02/'):
-                start_idx = i
-                break
+        # ==================== ARCHIVOS MENOR ====================
+        if es_menor:
+            match = re.search(r'\b(19|20)\d{2}\b', archivo.name)
+            if not match:
+                return Response({'error': 'No se pudo extraer el año del nombre del archivo'}, status=400)
+            año_import = int(match.group())
 
-        if start_idx is None:
-            return Response({'error': 'No se encontró ninguna fila con fecha (formato "02/...")'}, status=400)
+            if len(filas) == 0:
+                return Response({'error': 'El archivo está vacío'}, status=400)
 
-        # Encontrar encabezados (columna anterior)
-        header_indices = {}
-        if start_idx > 0:
-            possible_header = filas[start_idx-1]
-            header_str = ' '.join(str(cell).upper() for cell in possible_header if cell)
-            if any(keyword in header_str for keyword in ['CODCLI', 'JCP', 'KWHT']):
-                header_indices = self._find_column_indices(possible_header)
+            # Para archivos MENOR, los encabezados están en la fila 3 (índice 2)
+            header_row_idx = 2  # Fila 3 (0-based)
+            if len(filas) <= header_row_idx:
+                return Response({'error': 'El archivo no tiene suficientes filas para los encabezados'}, status=400)
 
-        if not header_indices:
-            # Índices fijos por defecto
-            idx_codcli, idx_nta, idx_dc, idx_turnos, idx_jcp, idx_kwht = 4, 10, 15, 36, 9, 38
-        else:
-            idx_codcli = header_indices.get('codcli')
-            idx_nta = header_indices.get('nta')
-            idx_dc = header_indices.get('dc')
-            idx_turnos = header_indices.get('turnos')
-            idx_jcp = header_indices.get('jcp')
-            idx_kwht = header_indices.get('kwht')
-            if None in (idx_codcli, idx_nta, idx_dc, idx_turnos, idx_jcp, idx_kwht):
-                return Response({'error': 'Estructura de columnas desconocida'}, status=400)
+            # Verificar que las columnas existan en la fila de encabezados (opcional, para depuración)
+            # Las columnas se usarán con índices fijos, no necesitamos parsear nombres
+            # Pero podemos comprobar que la fila no esté vacía
+            if not any(filas[header_row_idx]):
+                return Response({'error': 'La fila de encabezados está vacía'}, status=400)
 
-        # Obtener todas las entidades para mapeo REEUP -> id
-        entidad_map = {e.codigo_REEUP: e.id for e in Entidad.objects.all()}
+            # Índices fijos de las columnas según las coordenadas proporcionadas
+            # MES = columna A (0)
+            # CODCLI = columna C (2)
+            # JCP = columna H (7)
+            # NTA = columna I (8)
+            # DC = columna L (11)
+            # KWHT = columna N (13)
+            idx_mes = 0
+            idx_codcli = 2
+            idx_jcp = 7
+            idx_nta = 8
+            idx_dc = 11
+            idx_kwht = 13
 
-        objetos = []  # Lista para bulk_create
-        reeup_faltantes = set()
+            entidad_map = {e.codigo_REEUP: e.id for e in Entidad.objects.all()}
+            objetos = []
+            reeup_faltantes = set()
 
-        for row in filas[start_idx:]:
-            if len(row) <= max(idx_codcli, idx_nta, idx_dc, idx_turnos, idx_jcp, idx_kwht):
-                continue
+            # Los datos comienzan después de la fila de encabezados
+            for row in filas[header_row_idx + 1:]:
+                # Saltar filas con menos columnas de las necesarias
+                if len(row) <= max(idx_mes, idx_codcli, idx_jcp, idx_nta, idx_dc, idx_kwht):
+                    continue
 
-            # Fecha
-            date_str = str(row[0]).strip()
-            if '/' not in date_str:
-                continue
-            parts = date_str.split('/')
-            if len(parts) < 3:
-                continue
-            try:
-                mes = int(parts[1])
-                año = int(parts[2])
-            except ValueError:
-                continue
+                # Mes
+                mes_val = str(row[idx_mes]).strip()
+                if not mes_val:
+                    continue
+                try:
+                    mes = int(mes_val)
+                    if not 1 <= mes <= 12:
+                        continue
+                except ValueError:
+                    continue
 
-            # Código servicio
-            codcli = str(row[idx_codcli]).strip()
-            if not codcli:
-                continue
-            try:
-                codigo_servicio = int(float(codcli))
-            except ValueError:
-                continue
+                # Código servicio
+                try:
+                    codigo_servicio = int(float(str(row[idx_codcli]).strip()))
+                except (ValueError, TypeError):
+                    continue
 
-            # Tarifa
-            tarifa = str(row[idx_nta]).strip()
-            if not tarifa:
-                continue
+                # Tarifa
+                tarifa = str(row[idx_nta]).strip()
+                if not tarifa:
+                    continue
 
-            # Demanda
-            dc_str = str(row[idx_dc]).strip().replace(',', '.')
-            try:
-                demanda = float(dc_str)
-            except ValueError:
-                continue
+                # Demanda
+                dc_str = str(row[idx_dc]).strip().replace(',', '.')
+                try:
+                    demanda = float(dc_str)
+                except ValueError:
+                    continue
 
-            # Régimen
-            turnos_str = str(row[idx_turnos]).strip()
-            try:
-                regimen = int(float(turnos_str))
-            except ValueError:
-                continue
+                # REEUP
+                jcp = str(row[idx_jcp]).strip()
+                reeup = self._format_reeup(jcp)
+                if not reeup:
+                    continue
 
-            # REEUP
-            jcp = str(row[idx_jcp]).strip()
-            reeup = self._format_reeup(jcp)
-            if not reeup:
-                continue
+                # Consumo
+                kwht_str = str(row[idx_kwht]).strip().replace(',', '.')
+                try:
+                    consumo_real = float(kwht_str)
+                except ValueError:
+                    continue
 
-            # Consumo real
-            kwht_str = str(row[idx_kwht]).strip().replace(',', '.')
-            if not kwht_str:
-                continue
-            try:
-                consumo_real = float(kwht_str)
-            except ValueError:
-                continue
+                entidad_id = entidad_map.get(reeup)
+                if entidad_id is None:
+                    reeup_faltantes.add(reeup)
+                    continue
 
-            entidad_id = entidad_map.get(reeup)
-            if entidad_id is None:
-                reeup_faltantes.add(reeup)
-                continue
-
-            # Crear objeto del modelo (sin guardar aún)
-            objetos.append(
-                Servicio_electrico(
-                    entidad_id=entidad_id,
-                    codigo_servicio=codigo_servicio,
-                    tarifa_contratada=tarifa,
-                    demanda_contratada=demanda,
-                    regimen_trabajo=regimen,
-                    consumo_real=consumo_real,
-                    mes=mes,
-                    año=año
+                # Se omite regimen_trabajo (será NULL)
+                objetos.append(
+                    Servicio_electrico(
+                        entidad_id=entidad_id,
+                        codigo_servicio=codigo_servicio,
+                        tarifa_contratada=tarifa,
+                        demanda_contratada=demanda,
+                        consumo_real=consumo_real,
+                        mes=mes,
+                        año=año_import
+                    )
                 )
-            )
 
-        if not objetos:
-            return Response({
-                'error': 'No hay datos válidos para importar',
-                'reeup_faltantes': list(reeup_faltantes)
-            }, status=400)
+            if not objetos:
+                return Response({
+                    'error': 'No hay datos válidos para importar',
+                    'reeup_faltantes': list(reeup_faltantes)
+                }, status=400)
 
-        # Inserción masiva con manejo de conflictos (unique_together o UniqueConstraint)
-        created_count = 0
-        try:
             with transaction.atomic():
-                # ignore_conflicts=True omite filas que violarían la restricción única
-                # (asumiendo que el modelo tiene unique_together = ('codigo_servicio', 'mes', 'año'))
-                created_objs = Servicio_electrico.objects.bulk_create(
-                    objetos,
-                    ignore_conflicts=True,
-                    batch_size=500  # Ajusta según el tamaño de tu archivo
-                )
+                created_objs = Servicio_electrico.objects.bulk_create(objetos, ignore_conflicts=True, batch_size=500)
                 created_count = len(created_objs)
-        except Exception as e:
-            return Response({'error': f'Error durante la inserción: {str(e)}'}, status=500)
 
-        resultado = {
-            'insertados': created_count,
-            'duplicados': len(objetos) - created_count,
-            'total_procesados': len(objetos),
-            'reeup_faltantes': list(reeup_faltantes) if reeup_faltantes else []
-        }
-        return Response(resultado, status=200)
+            return Response({
+                'insertados': created_count,
+                'duplicados': len(objetos) - created_count,
+                'total_procesados': len(objetos),
+                'reeup_faltantes': list(reeup_faltantes),
+                'año_importado': año_import,
+                'tipo': 'MENOR'
+            }, status=200)
+
+        # ==================== ARCHIVOS NORMALES (con fecha) ====================
+        else:
+            # Detectar primera fila con fecha '02/...'
+            start_idx = None
+            for i, row in enumerate(filas):
+                if len(row) > 0 and row[0] and isinstance(row[0], str) and row[0].strip().startswith('02/'):
+                    start_idx = i
+                    break
+
+            if start_idx is None:
+                return Response({'error': 'No se encontró ninguna fila con fecha (formato "02/...")'}, status=400)
+
+            header_indices = {}
+            if start_idx > 0:
+                possible_header = filas[start_idx-1]
+                header_str = ' '.join(str(cell).upper() for cell in possible_header if cell)
+                if any(keyword in header_str for keyword in ['CODCLI', 'JCP', 'KWHT']):
+                    header_indices = self._find_column_indices(possible_header)
+
+            if not header_indices:
+                idx_codcli, idx_nta, idx_dc, idx_turnos, idx_jcp, idx_kwht = 4, 10, 15, 36, 9, 38
+            else:
+                idx_codcli = header_indices.get('codcli')
+                idx_nta = header_indices.get('nta')
+                idx_dc = header_indices.get('dc')
+                idx_turnos = header_indices.get('turnos')
+                idx_jcp = header_indices.get('jcp')
+                idx_kwht = header_indices.get('kwht')
+                if None in (idx_codcli, idx_nta, idx_dc, idx_turnos, idx_jcp, idx_kwht):
+                    return Response({'error': 'Estructura de columnas desconocida'}, status=400)
+
+            entidad_map = {e.codigo_REEUP: e.id for e in Entidad.objects.all()}
+            objetos = []
+            reeup_faltantes = set()
+
+            for row in filas[start_idx:]:
+                if len(row) <= max(idx_codcli, idx_nta, idx_dc, idx_turnos, idx_jcp, idx_kwht):
+                    continue
+
+                date_str = str(row[0]).strip()
+                if '/' not in date_str:
+                    continue
+                parts = date_str.split('/')
+                if len(parts) < 3:
+                    continue
+                try:
+                    mes = int(parts[1])
+                    año = int(parts[2])
+                except ValueError:
+                    continue
+
+                codcli = str(row[idx_codcli]).strip()
+                if not codcli:
+                    continue
+                try:
+                    codigo_servicio = int(float(codcli))
+                except ValueError:
+                    continue
+
+                tarifa = str(row[idx_nta]).strip()
+                if not tarifa:
+                    continue
+
+                dc_str = str(row[idx_dc]).strip().replace(',', '.')
+                try:
+                    demanda = float(dc_str)
+                except ValueError:
+                    continue
+
+                turnos_str = str(row[idx_turnos]).strip()
+                try:
+                    regimen = int(float(turnos_str))
+                except ValueError:
+                    continue
+
+                jcp = str(row[idx_jcp]).strip()
+                reeup = self._format_reeup(jcp)
+                if not reeup:
+                    continue
+
+                kwht_str = str(row[idx_kwht]).strip().replace(',', '.')
+                if not kwht_str:
+                    continue
+                try:
+                    consumo_real = float(kwht_str)
+                except ValueError:
+                    continue
+
+                entidad_id = entidad_map.get(reeup)
+                if entidad_id is None:
+                    reeup_faltantes.add(reeup)
+                    continue
+
+                objetos.append(
+                    Servicio_electrico(
+                        entidad_id=entidad_id,
+                        codigo_servicio=codigo_servicio,
+                        tarifa_contratada=tarifa,
+                        demanda_contratada=demanda,
+                        regimen_trabajo=regimen,
+                        consumo_real=consumo_real,
+                        mes=mes,
+                        año=año
+                    )
+                )
+
+            if not objetos:
+                return Response({
+                    'error': 'No hay datos válidos para importar',
+                    'reeup_faltantes': list(reeup_faltantes)
+                }, status=400)
+
+            with transaction.atomic():
+                created_objs = Servicio_electrico.objects.bulk_create(objetos, ignore_conflicts=True, batch_size=500)
+                created_count = len(created_objs)
+
+            return Response({
+                'insertados': created_count,
+                'duplicados': len(objetos) - created_count,
+                'total_procesados': len(objetos),
+                'reeup_faltantes': list(reeup_faltantes)
+            }, status=200)
 
 
 

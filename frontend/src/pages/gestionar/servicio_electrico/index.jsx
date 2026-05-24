@@ -130,18 +130,19 @@ export function ServicioElectricoIndex() {
       setImportResult(result);
       // Refrescar datos después de importar
       fetchData();
-      // Cerrar modal automáticamente después de unos segundos
-      setTimeout(() => {
-        setShowImportModal(false);
-        setImportFile(null);
-        setImportResult(null);
-      }, 3000);
+      // ✅ Ya no se cierra automáticamente; el usuario debe hacer clic en "Cerrar"
     } catch (error) {
       console.error('Error importando:', error);
       setImportResult({ error: error.response?.data?.error || 'Error al importar' });
     } finally {
       setImporting(false);
     }
+  };
+
+  const closeImportModal = () => {
+    setShowImportModal(false);
+    setImportFile(null);
+    setImportResult(null);
   };
 
   return (
@@ -154,7 +155,7 @@ export function ServicioElectricoIndex() {
             onClick={() => setShowImportModal(true)}
             className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition-colors"
           >
-            📂 Importar CAMAY
+            📂 Importar Excel
           </button>
         </div>
 
@@ -265,15 +266,11 @@ export function ServicioElectricoIndex() {
             )}
             <div className="flex justify-end gap-3">
               <button
-                onClick={() => {
-                  setShowImportModal(false);
-                  setImportFile(null);
-                  setImportResult(null);
-                }}
+                onClick={closeImportModal}
                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
                 disabled={importing}
               >
-                Cancelar
+                Cerrar
               </button>
               <button
                 onClick={handleImport}
