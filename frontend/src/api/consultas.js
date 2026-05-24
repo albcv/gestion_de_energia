@@ -24,3 +24,14 @@ export const getTopEntidadesConsumo = async (anio, unidad = 'kWh') => {
     throw error;
   }
 };
+
+export const getPdfReportUrl = (consulta, anio = '', entidadId = '', unidad = 'MWh') => {
+  const params = new URLSearchParams();
+  params.append('consulta', consulta);
+  if (anio) params.append('anio', anio);
+  if (entidadId) params.append('entidadId', entidadId);
+  if (unidad) params.append('unidad', unidad);
+  
+  const baseURL = axios.defaults.baseURL || '';
+  return `${baseURL}/generar-pdf/?${params.toString()}`;
+};

@@ -2,18 +2,23 @@
 import { useState, useEffect, useCallback } from 'react';
 import AsyncSelect from 'react-select/async';
 import { getEntidadById, searchEntidad } from '../api/crud_modelos/entidad';
-import { 
-  getServiciosElectricosByEntidad, 
+import {
+  getServiciosElectricosByEntidad,
   getAniosDisponiblesEntidad,
   getEntidadesSinServicio,
   getEntidadesSinNombre
 } from '../api/crud_modelos/entidad';
+import { getAñosDisponibles } from '../api/crud_modelos/servicio_electrico.js';
 import { ConsumoAnualChart } from '../components/ConsumoAnualChart';
+import { TopEntidadesConsumo } from '../components/TopEntidadesConsumo';
+import { getPdfReportUrl } from '../api/consultas';
 
 const consultaOptions = [
   { value: 'info', label: '📋 Información de una entidad' },
   { value: 'consumo', label: '📊 Consumo energético por mes de una entidad' },
+  { value: 'consumo_global', label: '📈 Consumo energético total por mes en un año' },
   { value: 'servicios', label: '⚡ Servicios eléctricos asociados a una entidad' },
+  { value: 'top_consumo', label: '⚡ Entidades de mayor consumo energético' },
   { value: 'sin_servicio', label: '⚠️ Entidades sin servicio eléctrico asociado' },
   { value: 'sin_nombre', label: '❓ Entidades sin nombre asociado' },
 ];
@@ -26,13 +31,28 @@ export function Consultas() {
   const [error, setError] = useState('');
   const [hasQueried, setHasQueried] = useState(false);
   const [availableYears, setAvailableYears] = useState([]);
+  const [globalYears, setGlobalYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState('');
   const [unidad, setUnidad] = useState('MWh');
+  const [generatingPDF, setGeneratingPDF] = useState(false);
+
+  useEffect(() => {
+    const fetchGlobalYears = async () => {
+      try {
+        const años = await getAñosDisponibles();
+        setGlobalYears(años);
+        if (años.length > 0) setSelectedYear(años[0]);
+      } catch (error) {
+        console.error('Error cargando años globales:', error);
+      }
+    };
+    fetchGlobalYears();
+  }, []);
 
   const limpiarConsulta = () => {
     setSelectedConsulta('');
     setSelectedEntity(null);
-    setSelectedYear('');
+    setSelectedYear(globalYears.length > 0 ? globalYears[0] : '');
     setUnidad('MWh');
     setResultData(null);
     setHasQueried(false);
@@ -45,7 +65,6 @@ export function Consultas() {
     setHasQueried(false);
     setError('');
     setAvailableYears([]);
-    setSelectedYear('');
   }, [selectedConsulta, selectedEntity]);
 
   useEffect(() => {
@@ -54,7 +73,6 @@ export function Consultas() {
         try {
           const years = await getAniosDisponiblesEntidad(selectedEntity.value);
           setAvailableYears(years);
-          if (years.length > 0) setSelectedYear(years[0]);
         } catch (err) {
           console.error(err);
           setAvailableYears([]);
@@ -63,15 +81,13 @@ export function Consultas() {
       fetchYears();
     } else {
       setAvailableYears([]);
-      setSelectedYear('');
     }
   }, [selectedConsulta, selectedEntity]);
 
   const loadEntityOptions = useCallback(async (inputValue) => {
-    if (!inputValue || inputValue.length < 2) return []; 
+    if (!inputValue || inputValue.length < 2) return [];
     try {
       const results = await searchEntidad(inputValue);
-      console.log('Opciones recibidas:', results);
       return results;
     } catch (err) {
       console.error('Error en loadEntityOptions:', err);
@@ -88,7 +104,7 @@ export function Consultas() {
       setError('Debe seleccionar una entidad');
       return;
     }
-    if (selectedConsulta === 'consumo' && !selectedYear) {
+    if (['consumo', 'consumo_global', 'top_consumo'].includes(selectedConsulta) && !selectedYear) {
       setError('Seleccione un año');
       return;
     }
@@ -108,12 +124,24 @@ export function Consultas() {
       } else if (selectedConsulta === 'consumo') {
         setResultData({
           type: 'consumo',
-          data: { 
-            entityId: selectedEntity.value, 
-            year: selectedYear, 
+          data: {
+            entityId: selectedEntity.value,
+            year: selectedYear,
             entityName: selectedEntity.label,
             unidad: unidad
           }
+        });
+      } else if (selectedConsulta === 'consumo_global') {
+        setResultData({
+          type: 'consumo_global',
+          year: selectedYear,
+          unidad: unidad
+        });
+      } else if (selectedConsulta === 'top_consumo') {
+        setResultData({
+          type: 'top_consumo',
+          year: selectedYear,
+          unidad: unidad
         });
       } else if (selectedConsulta === 'sin_servicio') {
         const entidades = await getEntidadesSinServicio();
@@ -128,6 +156,19 @@ export function Consultas() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGeneratePDF = () => {
+    if (!selectedConsulta || !hasQueried) return;
+    const pdfUrl = getPdfReportUrl(
+      selectedConsulta,
+      selectedYear,
+      selectedEntity?.value || '',
+      unidad
+    );
+    setGeneratingPDF(true);
+    window.open(pdfUrl, '_blank');
+    setTimeout(() => setGeneratingPDF(false), 1000);
   };
 
   const shouldShow = (value) => {
@@ -173,40 +214,54 @@ export function Consultas() {
         return (
           <div className="bg-white rounded-xl shadow-xl p-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Servicios eléctricos</h2>
-            <table className="min-w-full bg-white border">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-4 py-2">Código</th>
-                  <th className="px-4 py-2">Mes</th>
-                  <th className="px-4 py-2">Año</th>
-                  <th className="px-4 py-2">Consumo real (kWh)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {resultData.data.map(serv => (
-                  <tr key={serv.id}>
-                    <td className="px-4 py-2">{serv.codigo_servicio}</td>
-                    <td className="px-4 py-2">{serv.mes}</td>
-                    <td className="px-4 py-2">{serv.año}</td>
-                    <td className="px-4 py-2">{serv.consumo_real?.toLocaleString('es-ES') || '0'}</td>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-2">Código</th>
+                    <th className="px-4 py-2">Mes</th>
+                    <th className="px-4 py-2">Año</th>
+                    <th className="px-4 py-2">Consumo real (kWh)</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {resultData.data.map(serv => (
+                    <tr key={serv.id}>
+                      <td className="px-4 py-2">{serv.codigo_servicio}</td>
+                      <td className="px-4 py-2">{serv.mes}</td>
+                      <td className="px-4 py-2">{serv.año}</td>
+                      <td className="px-4 py-2">{serv.consumo_real?.toLocaleString('es-ES') || '0'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         );
-      case 'consumo':
+      case 'consumo': {
         const { entityId, year, entityName, unidad: unidadConsumo } = resultData.data;
         return (
           <div>
             <ConsumoAnualChart año={year} entityId={entityId} entidadNombre={entityName} unidad={unidadConsumo} />
           </div>
         );
+      }
+      case 'consumo_global':
+        return (
+          <div>
+            <ConsumoAnualChart año={resultData.year} unidad={resultData.unidad} />
+          </div>
+        );
+      case 'top_consumo':
+        return (
+          <div>
+            <TopEntidadesConsumo año={resultData.year} unidad={resultData.unidad} />
+          </div>
+        );
       case 'list':
         if (!resultData.data.length) {
           return <div className="bg-white p-6 text-center">No se encontraron entidades.</div>;
         }
-        
         let titulo = '';
         if (resultData.listType === 'sin_servicio') {
           titulo = `Entidades sin servicio eléctrico (${resultData.data.length} entidad${resultData.data.length !== 1 ? 'es' : ''})`;
@@ -215,7 +270,6 @@ export function Consultas() {
         } else {
           titulo = `Listado de entidades (${resultData.data.length} entidad${resultData.data.length !== 1 ? 'es' : ''})`;
         }
-        
         return (
           <div className="bg-white rounded-xl shadow-xl p-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">{titulo}</h2>
@@ -279,7 +333,7 @@ export function Consultas() {
             </div>
           )}
 
-          {selectedConsulta === 'consumo' && availableYears.length > 0 && (
+          {['consumo', 'consumo_global', 'top_consumo'].includes(selectedConsulta) && (
             <>
               <div className="mb-4">
                 <label className="block text-gray-800 font-medium mb-2">Año:</label>
@@ -288,8 +342,16 @@ export function Consultas() {
                   onChange={(e) => setSelectedYear(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 >
-                  {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
+                  <option value="">Seleccione un año</option>
+                  {globalYears.map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
                 </select>
+                {selectedConsulta === 'consumo' && availableYears.length > 0 && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    Años disponibles para esta entidad: {availableYears.join(', ')}
+                  </p>
+                )}
               </div>
 
               <div className="mb-4">
@@ -342,6 +404,18 @@ export function Consultas() {
           </div>
           {error && <p className="text-red-600 mt-3 text-center">{error}</p>}
         </div>
+
+        {hasQueried && !loading && resultData && (
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={handleGeneratePDF}
+              disabled={generatingPDF}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center gap-2"
+            >
+              <span>📄</span> {generatingPDF ? 'Generando...' : 'Generar PDF'}
+            </button>
+          </div>
+        )}
 
         {hasQueried && !loading && renderResult()}
       </div>

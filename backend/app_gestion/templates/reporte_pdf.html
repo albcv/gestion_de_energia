@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de consulta</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2cm;
+        }
+
+        h1 {
+            color: #b91c1c;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+            border: 1px solid #333;
+        }
+
+        th,
+        td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        ul {
+            margin: 0.5em 0;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Reporte de {{ consulta|title }}</h1>
+    <p>Generado el {{ fecha_generacion }}</p>
+
+    {# Solo mostrar año y unidad para consultas que realmente los requieren #}
+    {% if consulta != 'info' and consulta != 'servicios' and consulta != 'sin_servicio' and consulta != 'sin_nombre'%}
+    <p>Año: {{ anio|default:"—" }}</p>
+    <p>Unidad: {{ unidad }}</p>
+    {% endif %}
+
+    {% if entidad_nombre %}
+    <h2>Entidad: {{ entidad_nombre }} (REEUP: {{ codigo_reeup }})</h2>
+    {% endif %}
+
+    {% if datos %}
+    <h2>Información de la entidad</h2>
+    <ul>
+        {% for item in datos %}
+        <li><strong>{{ item.label }}:</strong> {{ item.value }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if servicios %}
+    <h2>Servicios eléctricos</h2>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Mes</th>
+                    <th>Año</th>
+                    <th>Consumo (kWh)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in servicios %}
+                <tr>
+                    <td>{{ s.codigo_servicio }}</td>
+                    <td>{{ s.mes_display }}</td>
+                    <td>{{ s.año_display }}</td>
+                    <td>{{ s.consumo_real|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if consumo_mensual %}
+    <h2>Consumo mensual ({{ unidad }})</h2>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Mes</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in consumo_mensual %}
+                <tr>
+                    <td>{{ item.nombre_mes }}</td>
+                    <td>{{ item.total|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if top_entidades %}
+    <h2>Top 10 entidades con mayor consumo ({{ unidad }})</h2>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Código REEUP</th>
+                    <th>Consumo total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ent in top_entidades %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ ent.nombre }}</td>
+                    <td>{{ ent.codigo_reeup }}</td>
+                    <td>{{ ent.consumo_total|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if listado %}
+    <h2>Listado de entidades</h2>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Código REEUP</th>
+                    <th>Municipio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ent in listado %}
+                <tr>
+                    <td>{{ ent.nombre|default:"—" }}</td>
+                    <td>{{ ent.codigo_REEUP }}</td>
+                    <td>{{ ent.municipio__nombre|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</body>
+
+</html>
