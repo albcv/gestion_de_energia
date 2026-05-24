@@ -1,13 +1,11 @@
 # views/consultas/generate_pdf.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from datetime import datetime
 from ...authentication import CookieTokenAuthentication
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum, Q, Count
 from ...models import Servicio_electrico, Entidad
@@ -16,7 +14,7 @@ class GenerateReportPDFView(APIView):
     """
     Endpoint para generar un reporte PDF de la consulta seleccionada.
     """
-    authentication_classes = [CookieTokenAuthentication, TokenAuthentication]
+    authentication_classes = [CookieTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
