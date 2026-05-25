@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { CrudIndex } from '../../../components/CrudIndex';
-import { getAllServicioElectrico, deleteServicioElectrico, importarServicioElectrico } from '../../../api/crud_modelos/servicio_electrico';
+import { 
+  getAllServicioElectrico, 
+  deleteServicioElectrico, 
+  importarServicioElectrico,
+  deleteAllServicioElectrico      
+} from '../../../api/crud_modelos/servicio_electrico';
 import { getAñosDisponibles } from '../../../api/crud_modelos/servicio_electrico';
 import axios from '../../../api/axios'; 
 
@@ -95,6 +100,12 @@ export function ServicioElectricoIndex() {
     fetchData();
   }, [currentPage, filters]);
 
+  const handleDeleteAll = async () => {
+    await deleteAllServicioElectrico();
+    setCurrentPage(1);
+    await fetchData();
+  };
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
@@ -114,7 +125,6 @@ export function ServicioElectricoIndex() {
     });
   };
 
-  // Funciones para importar
   const handleFileChange = (e) => {
     setImportFile(e.target.files[0]);
     setImportResult(null);
@@ -129,7 +139,7 @@ export function ServicioElectricoIndex() {
     try {
       const result = await importarServicioElectrico(importFile);
       setImportResult(result);
-      fetchData(); // Refrescar datos después de importar
+      fetchData();
     } catch (error) {
       console.error('Error importando:', error);
       setImportResult({ error: error.response?.data?.error || 'Error al importar' });
@@ -152,7 +162,6 @@ export function ServicioElectricoIndex() {
         { reeup_faltantes: importResult.reeup_faltantes },
         { responseType: 'blob' }
       );
-      // Crear un enlace temporal para descargar el blob
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -170,7 +179,6 @@ export function ServicioElectricoIndex() {
   return (
     <div className="bg-yellow-200 min-h-screen">
       <div className="container mx-auto p-4">
-        {/* Encabezado con botón importar */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Servicios Eléctricos</h1>
           <button
@@ -181,7 +189,6 @@ export function ServicioElectricoIndex() {
           </button>
         </div>
 
-        {/* Filtros */}
         <div className="bg-white p-4 rounded-xl shadow-xl mb-6">
           <h2 className="text-xl font-bold mb-4">Filtros</h2>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -232,7 +239,6 @@ export function ServicioElectricoIndex() {
           </div>
         </div>
 
-        {/* Tabla CrudIndex */}
         <CrudIndex
           title="Gestionar Servicios Eléctricos"
           items={data}
@@ -248,10 +254,11 @@ export function ServicioElectricoIndex() {
           itemName="Servicio eléctrico"
           totalCount={totalCount}
           loading={loading}
+          onDeleteAll={handleDeleteAll}
+          itemNamePlural="Servicios eléctricos"
         />
       </div>
 
-      {/* Modal de importación con loader circular y mensaje */}
       {showImportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-md w-full relative">

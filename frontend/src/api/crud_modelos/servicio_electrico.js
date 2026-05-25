@@ -60,6 +60,16 @@ export const deleteServicioElectrico = async (id) => {
   }
 };
 
+export const deleteAllServicioElectrico = async () => {
+  try {
+    const response = await axios.post(`${URL}eliminar-todos/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar todos los servicios eléctricos:', error);
+    throw error;
+  }
+};
+
 export const searchServicioElectrico = async (searchTerm) => {
   try {
     const params = new URLSearchParams();

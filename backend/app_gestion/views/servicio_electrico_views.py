@@ -396,3 +396,22 @@ class ServicioElectricoViewSet(viewsets.ModelViewSet):
             elif col_clean == 'KWHT':
                 indices['kwht'] = idx
         return indices
+
+    
+    @action(detail=False, methods=['post'], url_path='eliminar-todos')
+    def eliminar_todos(self, request):
+        """
+        Elimina TODOS los registros de servicios eléctricos.
+        """
+
+        count = Servicio_electrico.objects.count()
+        if count == 0:
+            return Response({'message': 'No hay registros para eliminar', 'deleted': 0}, status=200)
+
+        # Eliminar todos los registros
+        deleted_count, _ = Servicio_electrico.objects.all().delete()
+
+        return Response({
+            'message': f'Se eliminaron {deleted_count} registros correctamente',
+            'deleted': deleted_count
+        }, status=200)

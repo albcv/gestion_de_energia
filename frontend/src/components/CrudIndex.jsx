@@ -10,54 +10,51 @@ const VerIcon = () => <img src={verImg} alt="ver" className="w-5 h-5" />;
 const EditarIcon = () => <img src={editarImg} alt="editar" className="w-5 h-5" />;
 const EliminarIcon = () => <img src={eliminarImg} alt="eliminar" className="w-5 h-5" />;
 
-export function CrudIndex({ 
+export function CrudIndex({
   title,
   items,
   totalPages,
   currentPage,
   onPageChange,
   onSearch,
-  searchTerm,           
+  searchTerm,
   deleteItem,
-  bulkDeleteItems,        
-  onRefresh,           
+  bulkDeleteItems,
+  onRefresh,
   columns,
   basePath,
   itemName,
+  itemNamePlural,
   totalCount,
   loading,
+  onDeleteAll,
 }) {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState(searchTerm || '');
   const [selectedIds, setSelectedIds] = useState(new Set());
 
-  // Sincronizar input con el padre
+  // Plural automático o personalizado
+  const nombrePlural = itemNamePlural || `${itemName}s`;
+
   useEffect(() => {
     setInputValue(searchTerm || '');
   }, [searchTerm]);
 
-  // Limpiar selección cuando cambien los items (página nueva, búsqueda, etc.)
   useEffect(() => {
     setSelectedIds(new Set());
   }, [items]);
 
   const handleSearchClick = () => {
-    if (onSearch) {
-      onSearch(inputValue);
-    }
+    if (onSearch) onSearch(inputValue);
   };
 
   const handleClear = () => {
     setInputValue('');
-    if (onSearch) {
-      onSearch('');
-    }
+    if (onSearch) onSearch('');
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleSearchClick();
-    }
+    if (e.key === 'Enter') handleSearchClick();
   };
 
   const handleDelete = async (id) => {
@@ -65,9 +62,7 @@ export function CrudIndex({
       try {
         await deleteItem(id);
         toast.success(`${itemName} eliminado correctamente`);
-        if (onRefresh) {
-          onRefresh();
-        }
+        if (onRefresh) onRefresh();
       } catch (error) {
         console.error(`Error eliminando ${itemName}:`, error);
         toast.error(`Error al eliminar ${itemName}`);
@@ -75,25 +70,39 @@ export function CrudIndex({
     }
   };
 
-  // Eliminación masiva
   const handleBulkDelete = async () => {
     if (selectedIds.size === 0) return;
-    if (window.confirm(`¿Está seguro de eliminar ${selectedIds.size} ${itemName}(s) seleccionados?`)) {
+    if (window.confirm(`¿Está seguro de eliminar ${selectedIds.size} ${nombrePlural} seleccionados?`)) {
       try {
         if (bulkDeleteItems) {
           await bulkDeleteItems(Array.from(selectedIds));
         } else {
-          // Fallback: eliminar uno por uno en paralelo
           await Promise.all(Array.from(selectedIds).map(id => deleteItem(id)));
         }
-        toast.success(`${selectedIds.size} ${itemName}(s) eliminado(s) correctamente`);
+        toast.success(`${selectedIds.size} ${nombrePlural} eliminados correctamente`);
         setSelectedIds(new Set());
-        if (onRefresh) {
-          onRefresh();
-        }
+        if (onRefresh) onRefresh();
       } catch (error) {
-        console.error(`Error eliminando ${itemName}s:`, error);
-        toast.error(`Error al eliminar los ${itemName}s seleccionados`);
+        console.error(`Error eliminando ${nombrePlural}:`, error);
+        toast.error(`Error al eliminar los ${nombrePlural} seleccionados`);
+      }
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (!onDeleteAll) {
+      toast.error('La función para eliminar todos no está disponible');
+      return;
+    }
+    if (window.confirm(`⚠️ ¿Está SEGURO de eliminar TODOS los ${totalCount || '?'} ${nombrePlural}? Esta acción no se puede deshacer.`)) {
+      try {
+        await onDeleteAll();
+        toast.success(`Todos los ${nombrePlural} han sido eliminados`);
+        if (onRefresh) onRefresh();
+        setSelectedIds(new Set());
+      } catch (error) {
+        console.error(`Error eliminando todos los ${nombrePlural}:`, error);
+        toast.error(`Error al eliminar todos los ${nombrePlural}`);
       }
     }
   };
@@ -158,15 +167,26 @@ export function CrudIndex({
         {/* Cabecera */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800">{title}</h1>
-          <button
-            onClick={() => navigate(`${basePath}/crear`)}
-            className="bg-gradient-to-r from-yellow-600 to-red-600 text-white px-6 py-3 rounded-lg hover:from-yellow-700 hover:to-red-700 transition-all transform hover:-translate-y-0.5"
-          >
-            + Crear {itemName}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => navigate(`${basePath}/crear`)}
+              className="bg-gradient-to-r from-yellow-600 to-red-600 text-white px-6 py-3 rounded-lg hover:from-yellow-700 hover:to-red-700 transition-all transform hover:-translate-y-0.5"
+            >
+              + Crear {itemName}
+            </button>
+            {onDeleteAll && (
+              <button
+                onClick={handleDeleteAll}
+                className="bg-red-700 text-white px-6 py-3 rounded-lg hover:bg-red-800 transition-all transform hover:-translate-y-0.5"
+                title="Eliminar todos los registros"
+              >
+                🗑️ Eliminar todos
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Barra de búsqueda y botón de eliminación masiva */}
+        {/* Barra de búsqueda y acciones masivas */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-1 min-w-[250px] gap-2">
             <input
@@ -299,13 +319,12 @@ export function CrudIndex({
                   key={index}
                   onClick={() => typeof page === 'number' ? onPageChange(page) : null}
                   disabled={page === '...'}
-                  className={`px-3 py-1 rounded border transition-colors ${
-                    page === currentPage
+                  className={`px-3 py-1 rounded border transition-colors ${page === currentPage
                       ? 'bg-yellow-600 text-white border-yellow-600'
                       : page === '...'
-                      ? 'cursor-default border-transparent'
-                      : 'bg-white hover:bg-gray-100'
-                  }`}
+                        ? 'cursor-default border-transparent'
+                        : 'bg-white hover:bg-gray-100'
+                    }`}
                 >
                   {page}
                 </button>
