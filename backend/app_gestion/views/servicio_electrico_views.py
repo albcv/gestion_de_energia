@@ -12,7 +12,7 @@ from ..models import Servicio_electrico
 from ..serializers import ServicioElectricoSerializer
 
 from rest_framework.parsers import MultiPartParser
-from django.db import transaction
+from django.db import transaction, connection
 from django.core.files.uploadedfile import UploadedFile
 from ..models import Servicio_electrico, Entidad
 
@@ -57,7 +57,7 @@ class ServicioElectricoViewSet(viewsets.ModelViewSet):
         if codigo_REEUP:
             queryset = queryset.filter(entidad__codigo_REEUP__icontains=codigo_REEUP)
 
-        return queryset.order_by('mes', 'año')
+        return queryset.order_by('-año', '-mes')
 
     @action(detail=False, methods=['get'], url_path='anios-disponibles')
     def anios_disponibles(self, request):
@@ -401,17 +401,24 @@ class ServicioElectricoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], url_path='eliminar-todos')
     def eliminar_todos(self, request):
         """
-        Elimina TODOS los registros de servicios eléctricos.
+        Elimina TODOS los registros de servicios eléctricos usando TRUNCATE,
+        reinicia la secuencia de IDs y aplica CASCADE a las tablas dependientes.
         """
 
+        # Verificar si hay registros
         count = Servicio_electrico.objects.count()
         if count == 0:
             return Response({'message': 'No hay registros para eliminar', 'deleted': 0}, status=200)
 
-        # Eliminar todos los registros
-        deleted_count, _ = Servicio_electrico.objects.all().delete()
-
+        table_name = Servicio_electrico._meta.db_table  # app_gestion_servicio_electrico
+        # Usar TRUNCATE con RESTART IDENTITY y CASCADE
+        # Esto elimina todas las filas, reinicia la secuencia y trunca tablas relacionadas
+        with transaction.atomic():
+            with connection.cursor() as cursor:
+                cursor.execute(f'TRUNCATE TABLE "{table_name}" RESTART IDENTITY CASCADE;')
+        # Nota: TRUNCATE no retorna el número de filas eliminadas directamente.
+        # Podemos devolver el contador anterior para información.
         return Response({
-            'message': f'Se eliminaron {deleted_count} registros correctamente',
-            'deleted': deleted_count
+            'message': f'Se eliminaron {count} registros, ID reiniciado y tablas dependientes truncadas en cascada',
+            'deleted': count
         }, status=200)

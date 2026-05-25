@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { logoutUser } from "../api/auth";
+import { useAuth } from "./Auth";
 
 export function Navegación() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth(); // Obtener usuario del contexto
 
   const handleLogout = async () => {
     await logoutUser();
@@ -15,6 +17,10 @@ export function Navegación() {
   const closeSidebar = () => setSidebarOpen(false);
   const closeMobileMenu = () => setIsMenuOpen(false);
 
+  // Verificar si el usuario es administrador
+  const isAdmin = user && user.is_superuser === true;
+
+  // Construir las secciones dinámicamente
   const sections = [
     {
       title: "Entidades",
@@ -28,7 +34,6 @@ export function Navegación() {
       title: "Energía eléctrica",
       items: [
         { name: 'Servicio eléctrico', path: '/gestionar/servicio-electrico' },
-     
       ]
     },
     {
@@ -37,8 +42,19 @@ export function Navegación() {
         { name: 'Provincia', path: '/gestionar/provincia' },
         { name: 'Municipio', path: '/gestionar/municipio' },
       ]
-    }
+    },
   ];
+
+  // Solo agregar la sección avanzada si el usuario es administrador
+  if (isAdmin) {
+    sections.push({
+      title: "Opciones avanzadas 🖥️",
+      items: [
+        { name: 'Usuarios 👤', path: '/gestionar/usuario' }, 
+        { name: 'Base de Datos 🗄️', path: '/gestionar/base_datos' },
+      ]
+    });
+  }
 
   return (
     <>

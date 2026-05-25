@@ -199,6 +199,7 @@ export function Consultas() {
           { label: 'Nombre', value: ent.nombre },
           { label: 'Código REEUP', value: ent.codigo_REEUP },
           { label: 'Municipio', value: ent.municipio_nombre },
+          { label: 'Organismo', value: ent.organismo },
           { label: 'NAE', value: ent.nae_codigo ? `${ent.nae_codigo} - ${ent.nae_nombre}` : (ent.nae_nombre || null) },
           { label: 'Siglas', value: ent.siglas },
           { label: 'Cuenta bancaria', value: ent.cuenta_bancaria },

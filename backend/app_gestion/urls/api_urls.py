@@ -4,11 +4,12 @@ from ..views import (
     OrganismoViewSet, EntidadViewSet, DirectorViewSet,
      MunicipioViewSet,
     ProvinciaViewSet, ServicioElectricoViewSet, 
-    NAEViewSet
+    NAEViewSet, UserViewSet
    
 )
 
 router = DefaultRouter()
+router.register(r'usuarios', UserViewSet, basename='usuarios')
 router.register(r'organismo', OrganismoViewSet, basename='organismo')
 router.register(r'entidades', EntidadViewSet, basename='entidades')
 router.register(r'directores', DirectorViewSet, basename='directores')

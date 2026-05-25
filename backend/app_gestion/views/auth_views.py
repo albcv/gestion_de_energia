@@ -5,9 +5,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from django.shortcuts import get_object_or_404
 from ..serializers import UserSerializer
 from ..authentication import CookieTokenAuthentication
+from django.utils import timezone
 
 @api_view(['POST'])
 @authentication_classes([])          
@@ -27,6 +27,10 @@ def login(request):
     if not user.check_password(password):
         return Response({"error": "Contraseña incorrecta"}, status=400)
     
+    # Actualizar último acceso
+    user.last_login = timezone.now()
+    user.save(update_fields=['last_login'])
+    
     token, _ = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(instance=user)
     
@@ -39,10 +43,10 @@ def login(request):
         httponly=True,
         secure=not is_debug,
         samesite='None' if not is_debug else 'Lax',
-        max_age=60 * 60 * 24 * 7,
+        max_age=60 * 60 * 24 * 7,  # 7 días
         path='/',
     )
-    get_token(request)  
+    
     return response
 
 @api_view(['POST'])
@@ -63,6 +67,8 @@ def perfil_usuario(request):
         'username': user.username,
         'email': user.email,
         'date_joined': user.date_joined.strftime('%Y-%m-%d'),
+        'is_staff': user.is_staff,
+        'is_superuser': user.is_superuser,
     }
     return Response(data, status=200)
 

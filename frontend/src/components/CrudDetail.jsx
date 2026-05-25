@@ -45,6 +45,19 @@ export function CrudDetail({
     }
   };
 
+  const formatValue = (field, value) => {
+    // Si el campo tiene una función de renderizado personalizada, úsala
+    if (field.render) return field.render(value);
+
+    // Si es booleano, mostrar "Sí" / "No"
+    if (typeof value === 'boolean') return value ? '✅ Sí' : '❌ No';
+
+    // Si es null o undefined o cadena vacía
+    if (value === null || value === undefined || value === '') return 'No hay información';
+
+    return value;
+  };
+
   if (loading) return <div className="text-center py-12">Cargando...</div>;
   if (!item) return <div className="text-center py-12">No se encontró el {itemName}</div>;
 
@@ -68,8 +81,8 @@ export function CrudDetail({
             <dl className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {fields.map(field => {
                 const value = item[field.key];
-                const isEmpty = !value || value.toString().trim() === '';
-                const displayValue = isEmpty ? 'No hay información' : value;
+                const displayValue = formatValue(field, value);
+                const isEmpty = (value === null || value === undefined || value === '' || (typeof value === 'boolean' && !value));
                 return (
                   <div key={field.key} className="border-b border-gray-200 pb-3">
                     <dt className="text-sm font-medium text-gray-500">{field.label}</dt>

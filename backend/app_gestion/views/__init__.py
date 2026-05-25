@@ -5,6 +5,7 @@ from .director_views import DirectorViewSet
 from .municipio_views import MunicipioViewSet
 from .provincia_views import ProvinciaViewSet
 from .servicio_electrico_views import ServicioElectricoViewSet
+from .user_views import UserViewSet
 from .nae_views import NAEViewSet
 from .consultas.consumo_por_mes import ConsumoPorMesView
 from .consultas.entidades_mayor_consumo import TopEntidadesConsumoView
@@ -14,6 +15,7 @@ __all__ = [
     'logout',
     'perfil_usuario',
     'cambiar_password',
+    'UserViewSet',
     'OrganismoViewSet',
     'EntidadViewSet',
     'DirectorViewSet',

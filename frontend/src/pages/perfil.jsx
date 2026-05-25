@@ -19,7 +19,6 @@ export function Perfil() {
   const [passwordSuccess, setPasswordSuccess] = useState('');
 
   useEffect(() => {
-    // Si no está autenticado, redirigir (aunque PrivateRoute ya lo hace)
     if (!isAuthenticated) {
       navigate('/login');
       return;
@@ -32,7 +31,6 @@ export function Perfil() {
       } catch (err) {
         console.error('Error al cargar perfil:', err);
         setError('Error al cargar perfil');
-        // Si el error es 401 (no autorizado), cerramos sesión y redirigimos
         if (err.response?.status === 401) {
           logout();
           navigate('/login');
@@ -88,10 +86,19 @@ export function Perfil() {
     } catch (error) {
       console.error('Error al cerrar sesión', error);
     } finally {
-      logout(); // Limpia el estado del contexto
+      logout();
       navigate('/login');
     }
   };
+
+  // Determinar el rol del usuario
+  const getRol = () => {
+    if (userData?.is_superuser) return { nombre: 'Superusuario', color: 'bg-purple-100 text-purple-800' };
+    if (userData?.is_staff) return { nombre: 'Administrador', color: 'bg-blue-100 text-blue-800' };
+    return { nombre: 'Usuario normal', color: 'bg-gray-100 text-gray-800' };
+  };
+
+  const rol = userData ? getRol() : null;
 
   if (loading) return <div className="text-center py-12">Cargando perfil...</div>;
   if (error) return <div className="text-center py-12 text-red-600">{error}</div>;
@@ -118,6 +125,14 @@ export function Perfil() {
                   <h2 className="text-3xl font-bold text-white">{userData.username}</h2>
                   <p className="text-blue-100 mt-2">{userData.email}</p>
                   <p className="text-blue-100 text-sm mt-1">Miembro desde: {userData.date_joined}</p>
+                  {/* Mostrar rol con badge */}
+                  {rol && (
+                    <div className="mt-3">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${rol.color}`}>
+                        {rol.nombre}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

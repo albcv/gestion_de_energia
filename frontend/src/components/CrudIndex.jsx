@@ -32,8 +32,6 @@ export function CrudIndex({
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState(searchTerm || '');
   const [selectedIds, setSelectedIds] = useState(new Set());
-
-  // Plural automático o personalizado
   const nombrePlural = itemNamePlural || `${itemName}s`;
 
   useEffect(() => {
@@ -271,7 +269,7 @@ export function CrudIndex({
                   </td>
                   {columns.map(col => (
                     <td key={col.key} className="px-6 py-4 text-gray-800">
-                      {item[col.key]}
+                      {col.render ? col.render(item[col.key]) : item[col.key]}
                     </td>
                   ))}
                   <td className="px-6 py-4">

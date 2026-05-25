@@ -48,4 +48,4 @@ class Entidad(TimeStampedModel):
         ordering = ['nombre']  
 
     def __str__(self):
-        return self.nombre
+        return self.nombre or "Sin nombre"

@@ -7,6 +7,7 @@ import { Inicio } from './pages/inicio';
 import { Perfil } from './pages/perfil';
 import { Navegación } from './components/Navegación';
 import { PrivateRoute } from './components/PrivateRoute';
+import { AdminRoute } from './components/AdminRoute';
 import { AuthProvider, useAuth } from './components/Auth';
 import { Consultas } from './pages/consultas';
 
@@ -44,6 +45,11 @@ import { ServicioElectricoDetail } from './pages/gestionar/servicio_electrico/ve
 import { NAEIndex } from './pages/gestionar/nae';
 import { NAEForm } from './pages/gestionar/nae/formulario';
 import { NAEDetail } from './pages/gestionar/nae/ver';
+
+// Gestión de Usuario
+import { UsuarioIndex } from './pages/gestionar/usuario/index';
+import { UsuarioForm } from './pages/gestionar/usuario/formulario';
+import { UsuarioDetail } from './pages/gestionar/usuario/ver';
 
 function AppContent() {
   const location = useLocation();
@@ -114,6 +120,14 @@ function AppContent() {
         <Route path="/gestionar/nae/crear" element={<PrivateRoute><NAEForm /></PrivateRoute>} />
         <Route path="/gestionar/nae/editar/:id" element={<PrivateRoute><NAEForm /></PrivateRoute>} />
         <Route path="/gestionar/nae/ver/:id" element={<PrivateRoute><NAEDetail /></PrivateRoute>} />
+
+        {/* Gestión de Usuario (solo admin) */}
+        <Route path="/gestionar/usuario" element={<AdminRoute><UsuarioIndex /></AdminRoute>} />
+        <Route path="/gestionar/usuario/crear" element={<AdminRoute><UsuarioForm /></AdminRoute>} />
+        <Route path="/gestionar/usuario/editar/:id" element={<AdminRoute><UsuarioForm /></AdminRoute>} />
+        <Route path="/gestionar/usuario/ver/:id" element={<AdminRoute><UsuarioDetail /></AdminRoute>} />
+
+
       </Routes>
     </div>
   );
