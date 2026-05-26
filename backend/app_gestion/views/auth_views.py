@@ -24,6 +24,10 @@ def login(request):
     except User.DoesNotExist:
         return Response({"error": "Usuario no encontrado"}, status=404)
     
+    # Verificar que el usuario esté activo
+    if not user.is_active:
+        return Response({"error": "Usuario inactivo"}, status=403)
+    
     if not user.check_password(password):
         return Response({"error": "Contraseña incorrecta"}, status=400)
     

@@ -52,6 +52,8 @@ import { UsuarioIndex } from './pages/gestionar/usuario/index';
 import { UsuarioForm } from './pages/gestionar/usuario/formulario';
 import { UsuarioDetail } from './pages/gestionar/usuario/ver';
 
+import { GestionarBD } from './pages/gestionar_bd.jsx';
+
 function AppContent() {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
@@ -130,6 +132,8 @@ function AppContent() {
         <Route path="/gestionar/usuario/crear" element={<SuperUserRoute><UsuarioForm /></SuperUserRoute>} />
         <Route path="/gestionar/usuario/editar/:id" element={<SuperUserRoute><UsuarioForm /></SuperUserRoute>} />
         <Route path="/gestionar/usuario/ver/:id" element={<SuperUserRoute><UsuarioDetail /></SuperUserRoute>} />
+
+        <Route path="/gestionar/base_datos" element={<SuperUserRoute><GestionarBD /></SuperUserRoute>} />
 
 
       </Routes>
