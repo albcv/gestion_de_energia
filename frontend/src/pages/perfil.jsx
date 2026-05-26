@@ -93,7 +93,7 @@ export function Perfil() {
 
   // Determinar el rol del usuario
   const getRol = () => {
-    if (userData?.is_superuser) return { nombre: 'Superusuario', color: 'bg-purple-100 text-purple-800' };
+    if (userData?.is_superuser) return { nombre: 'Superusuario', color: 'bg-blue-100 text-blue-900' };
     if (userData?.is_staff) return { nombre: 'Administrador', color: 'bg-blue-100 text-blue-800' };
     return { nombre: 'Usuario normal', color: 'bg-gray-100 text-gray-800' };
   };
