@@ -46,7 +46,7 @@ function RoleCheckboxes() {
         </label>
         <label className="flex items-center space-x-2">
           <input type="checkbox" {...register('is_staff')} className="w-4 h-4" />
-          <span className="text-gray-700">Staff (acceso admin)</span>
+          <span className="text-gray-700">Staff (admin)</span>
         </label>
         <label className="flex items-center space-x-2">
           <input type="checkbox" {...register('is_superuser')} className="w-4 h-4" />

@@ -1,14 +1,14 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './Auth';
 
-export const AdminRoute = ({ children }) => {
+export const SuperUserRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  const isAdmin = user?.is_staff === true;
+  const isAdmin = user?.is_superuser === true;
 
 if (!isAdmin) {
   return (

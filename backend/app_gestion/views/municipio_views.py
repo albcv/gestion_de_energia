@@ -1,13 +1,13 @@
 from rest_framework import viewsets
 from ..authentication import CookieTokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminOrReadOnly  
 from django.db.models import Q
 from ..models import Municipio
 from ..serializers import MunicipioSerializer
 
 class MunicipioViewSet(viewsets.ModelViewSet):
     authentication_classes = [CookieTokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
     serializer_class = MunicipioSerializer
 
     def get_queryset(self):

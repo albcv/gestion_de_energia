@@ -5,16 +5,15 @@ import { getAllUsuario, deleteUsuario } from '../../../api/crud_modelos/usuario'
 const columns = [
   { key: 'username', label: 'Nombre de usuario' },
   { key: 'email', label: 'Correo' },
-  { key: 'first_name', label: 'Nombre' },
-  { key: 'last_name', label: 'Apellidos' },
-  { 
-    key: 'is_active', 
-    label: 'Activo',
-    render: (value) => value ? '✅ Sí' : '❌ No'
-  },
   { 
     key: 'is_staff', 
-    label: 'Staff',
+    label: 'Administrador',
+    render: (value) => value ? '✅ Sí' : '❌ No'
+  },
+
+   { 
+    key: 'is_superuser', 
+    label: 'Superusuario',
     render: (value) => value ? '✅ Sí' : '❌ No'
   },
 
@@ -56,7 +55,7 @@ export function UsuarioIndex() {
 
   return (
     <CrudIndex
-      title="Gestionar Usuarios"
+      title="Gestionar Usuarios 👤"
       items={data}
       totalPages={totalPages}
       currentPage={currentPage}

@@ -1,13 +1,13 @@
 from rest_framework import viewsets
 from ..authentication import CookieTokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminOrReadOnly  
 from django.db.models import Q
 from ..models import NAE
 from ..serializers import NAESerializer
 
 class NAEViewSet(viewsets.ModelViewSet):
     authentication_classes = [CookieTokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
     serializer_class = NAESerializer
 
     def get_queryset(self):

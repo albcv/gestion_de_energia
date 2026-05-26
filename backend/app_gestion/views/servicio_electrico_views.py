@@ -4,7 +4,7 @@ import openpyxl
 
 from rest_framework import viewsets
 from ..authentication import CookieTokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminOrReadOnly  
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
@@ -24,7 +24,7 @@ from django.http import HttpResponse
 
 class ServicioElectricoViewSet(viewsets.ModelViewSet):
     authentication_classes = [CookieTokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
     serializer_class = ServicioElectricoSerializer
 
     def get_queryset(self):

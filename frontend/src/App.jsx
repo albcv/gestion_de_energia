@@ -8,6 +8,7 @@ import { Perfil } from './pages/perfil';
 import { Navegación } from './components/Navegación';
 import { PrivateRoute } from './components/PrivateRoute';
 import { AdminRoute } from './components/AdminRoute';
+import { SuperUserRoute } from './components/SuperUserRoute';
 import { AuthProvider, useAuth } from './components/Auth';
 import { Consultas } from './pages/consultas';
 
@@ -79,53 +80,56 @@ function AppContent() {
         <Route path="/consultas" element={<PrivateRoute><Consultas /></PrivateRoute>} />
         <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} />
 
+
+        {/* Rutas para administradores */}
+
         {/* Gestión de Organismo */}
-        <Route path="/gestionar/organismo" element={<PrivateRoute><OrganismoIndex /></PrivateRoute>} />
-        <Route path="/gestionar/organismo/crear" element={<PrivateRoute><OrganismoForm /></PrivateRoute>} />
-        <Route path="/gestionar/organismo/editar/:id" element={<PrivateRoute><OrganismoForm /></PrivateRoute>} />
-        <Route path="/gestionar/organismo/ver/:id" element={<PrivateRoute><OrganismoDetail /></PrivateRoute>} />
+        <Route path="/gestionar/organismo" element={<AdminRoute><OrganismoIndex /></AdminRoute>} />
+        <Route path="/gestionar/organismo/crear" element={<AdminRoute><OrganismoForm /></AdminRoute>} />
+        <Route path="/gestionar/organismo/editar/:id" element={<AdminRoute><OrganismoForm /></AdminRoute>} />
+        <Route path="/gestionar/organismo/ver/:id" element={<AdminRoute><OrganismoDetail /></AdminRoute>} />
 
         {/* Gestión de Provincias */}
-        <Route path="/gestionar/provincia" element={<PrivateRoute><ProvinciaIndex /></PrivateRoute>} />
-        <Route path="/gestionar/provincia/crear" element={<PrivateRoute><ProvinciaForm /></PrivateRoute>} />
-        <Route path="/gestionar/provincia/editar/:id" element={<PrivateRoute><ProvinciaForm /></PrivateRoute>} />
-        <Route path="/gestionar/provincia/ver/:id" element={<PrivateRoute><ProvinciaDetail /></PrivateRoute>} />
+        <Route path="/gestionar/provincia" element={<AdminRoute><ProvinciaIndex /></AdminRoute>} />
+        <Route path="/gestionar/provincia/crear" element={<AdminRoute><ProvinciaForm /></AdminRoute>} />
+        <Route path="/gestionar/provincia/editar/:id" element={<AdminRoute><ProvinciaForm /></AdminRoute>} />
+        <Route path="/gestionar/provincia/ver/:id" element={<AdminRoute><ProvinciaDetail /></AdminRoute>} />
 
         {/* Gestión de Municipios */}
-        <Route path="/gestionar/municipio" element={<PrivateRoute><MunicipioIndex /></PrivateRoute>} />
-        <Route path="/gestionar/municipio/crear" element={<PrivateRoute><MunicipioForm /></PrivateRoute>} />
-        <Route path="/gestionar/municipio/editar/:id" element={<PrivateRoute><MunicipioForm /></PrivateRoute>} />
-        <Route path="/gestionar/municipio/ver/:id" element={<PrivateRoute><MunicipioDetail /></PrivateRoute>} />
+        <Route path="/gestionar/municipio" element={<AdminRoute><MunicipioIndex /></AdminRoute>} />
+        <Route path="/gestionar/municipio/crear" element={<AdminRoute><MunicipioForm /></AdminRoute>} />
+        <Route path="/gestionar/municipio/editar/:id" element={<AdminRoute><MunicipioForm /></AdminRoute>} />
+        <Route path="/gestionar/municipio/ver/:id" element={<AdminRoute><MunicipioDetail /></AdminRoute>} />
 
         {/* Gestión de Entidades */}
-        <Route path="/gestionar/entidad" element={<PrivateRoute><EntidadIndex /></PrivateRoute>} />
-        <Route path="/gestionar/entidad/crear" element={<PrivateRoute><EntidadForm /></PrivateRoute>} />
-        <Route path="/gestionar/entidad/editar/:id" element={<PrivateRoute><EntidadForm /></PrivateRoute>} />
-        <Route path="/gestionar/entidad/ver/:id" element={<PrivateRoute><EntidadDetail /></PrivateRoute>} />
+        <Route path="/gestionar/entidad" element={<AdminRoute><EntidadIndex /></AdminRoute>} />
+        <Route path="/gestionar/entidad/crear" element={<AdminRoute><EntidadForm /></AdminRoute>} />
+        <Route path="/gestionar/entidad/editar/:id" element={<AdminRoute><EntidadForm /></AdminRoute>} />
+        <Route path="/gestionar/entidad/ver/:id" element={<AdminRoute><EntidadDetail /></AdminRoute>} />
 
         {/* Gestión de Directores */}
-        <Route path="/gestionar/director" element={<PrivateRoute><DirectorIndex /></PrivateRoute>} />
-        <Route path="/gestionar/director/crear" element={<PrivateRoute><DirectorForm /></PrivateRoute>} />
-        <Route path="/gestionar/director/editar/:id" element={<PrivateRoute><DirectorForm /></PrivateRoute>} />
-        <Route path="/gestionar/director/ver/:id" element={<PrivateRoute><DirectorDetail /></PrivateRoute>} />
+        <Route path="/gestionar/director" element={<AdminRoute><DirectorIndex /></AdminRoute>} />
+        <Route path="/gestionar/director/crear" element={<AdminRoute><DirectorForm /></AdminRoute>} />
+        <Route path="/gestionar/director/editar/:id" element={<AdminRoute><DirectorForm /></AdminRoute>} />
+        <Route path="/gestionar/director/ver/:id" element={<AdminRoute><DirectorDetail /></AdminRoute>} />
 
         {/* Gestión de Servicios Eléctricos */}
-        <Route path="/gestionar/servicio-electrico" element={<PrivateRoute><ServicioElectricoIndex /></PrivateRoute>} />
-        <Route path="/gestionar/servicio-electrico/crear" element={<PrivateRoute><ServicioElectricoForm /></PrivateRoute>} />
-        <Route path="/gestionar/servicio-electrico/editar/:id" element={<PrivateRoute><ServicioElectricoForm /></PrivateRoute>} />
-        <Route path="/gestionar/servicio-electrico/ver/:id" element={<PrivateRoute><ServicioElectricoDetail /></PrivateRoute>} />
+        <Route path="/gestionar/servicio-electrico" element={<AdminRoute><ServicioElectricoIndex /></AdminRoute>} />
+        <Route path="/gestionar/servicio-electrico/crear" element={<AdminRoute><ServicioElectricoForm /></AdminRoute>} />
+        <Route path="/gestionar/servicio-electrico/editar/:id" element={<AdminRoute><ServicioElectricoForm /></AdminRoute>} />
+        <Route path="/gestionar/servicio-electrico/ver/:id" element={<AdminRoute><ServicioElectricoDetail /></AdminRoute>} />
 
         {/* Gestión de NAE */}
-        <Route path="/gestionar/nae" element={<PrivateRoute><NAEIndex /></PrivateRoute>} />
-        <Route path="/gestionar/nae/crear" element={<PrivateRoute><NAEForm /></PrivateRoute>} />
-        <Route path="/gestionar/nae/editar/:id" element={<PrivateRoute><NAEForm /></PrivateRoute>} />
-        <Route path="/gestionar/nae/ver/:id" element={<PrivateRoute><NAEDetail /></PrivateRoute>} />
+        <Route path="/gestionar/nae" element={<AdminRoute><NAEIndex /></AdminRoute>} />
+        <Route path="/gestionar/nae/crear" element={<AdminRoute><NAEForm /></AdminRoute>} />
+        <Route path="/gestionar/nae/editar/:id" element={<AdminRoute><NAEForm /></AdminRoute>} />
+        <Route path="/gestionar/nae/ver/:id" element={<AdminRoute><NAEDetail /></AdminRoute>} />
 
-        {/* Gestión de Usuario (solo admin) */}
-        <Route path="/gestionar/usuario" element={<AdminRoute><UsuarioIndex /></AdminRoute>} />
-        <Route path="/gestionar/usuario/crear" element={<AdminRoute><UsuarioForm /></AdminRoute>} />
-        <Route path="/gestionar/usuario/editar/:id" element={<AdminRoute><UsuarioForm /></AdminRoute>} />
-        <Route path="/gestionar/usuario/ver/:id" element={<AdminRoute><UsuarioDetail /></AdminRoute>} />
+        {/* Gestión de Usuario (solo superusuario) */}
+        <Route path="/gestionar/usuario" element={<SuperUserRoute><UsuarioIndex /></SuperUserRoute>} />
+        <Route path="/gestionar/usuario/crear" element={<SuperUserRoute><UsuarioForm /></SuperUserRoute>} />
+        <Route path="/gestionar/usuario/editar/:id" element={<SuperUserRoute><UsuarioForm /></SuperUserRoute>} />
+        <Route path="/gestionar/usuario/ver/:id" element={<SuperUserRoute><UsuarioDetail /></SuperUserRoute>} />
 
 
       </Routes>

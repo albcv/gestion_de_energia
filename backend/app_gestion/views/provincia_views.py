@@ -1,12 +1,12 @@
 from rest_framework import viewsets
 from ..authentication import CookieTokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminOrReadOnly  
 from ..models import Provincia
 from ..serializers import ProvinciaSerializer
 
 class ProvinciaViewSet(viewsets.ModelViewSet):
     authentication_classes = [CookieTokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
     serializer_class = ProvinciaSerializer
 
     def get_queryset(self):

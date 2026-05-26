@@ -5,14 +5,14 @@ from django.db.models import Q, Sum, Count
 import calendar
 
 from ..authentication import CookieTokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminOrReadOnly   
 from ..models import Entidad, Servicio_electrico
 from ..serializers import EntidadSerializer, ServicioElectricoSerializer
 
 
 class EntidadViewSet(viewsets.ModelViewSet):
     authentication_classes = [CookieTokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]          
     serializer_class = EntidadSerializer
 
     def get_queryset(self):
@@ -41,7 +41,7 @@ class EntidadViewSet(viewsets.ModelViewSet):
             )
         return queryset.order_by('municipio__nombre')
 
-    # ---------- Acciones con detalle (para una entidad concreta) ----------
+    # ------- Acciones de solo lectura -------
     @action(detail=True, methods=['get'], url_path='servicios-electricos')
     def servicios_electricos(self, request, pk=None):
         entidad = self.get_object()
@@ -59,7 +59,6 @@ class EntidadViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='consumo-por-mes')
     def consumo_por_mes_entidad(self, request, pk=None):
-        # Obtener la entidad por su primary key
         try:
             entidad = Entidad.objects.get(pk=pk)
         except Entidad.DoesNotExist:
@@ -89,7 +88,7 @@ class EntidadViewSet(viewsets.ModelViewSet):
 
             total_kwh = (
                 Servicio_electrico.objects
-                .filter(entidad=entidad, año=año_real, mes=mes_real)  # filtro explícito
+                .filter(entidad=entidad, año=año_real, mes=mes_real)
                 .aggregate(total=Sum('consumo_real'))['total'] or 0
             )
 
@@ -107,10 +106,8 @@ class EntidadViewSet(viewsets.ModelViewSet):
             })
         return Response(resultado)
 
-    # ---------- Acciones sin detalle (listados globales) ----------
     @action(detail=False, methods=['get'], url_path='sin_servicio')
     def sin_servicio(self, request):
-        """Entidades que no tienen ningún servicio eléctrico asociado."""
         entidades = self.get_queryset().annotate(
             num_servicios=Count('servicios_electricos')
         ).filter(num_servicios=0)
@@ -119,7 +116,6 @@ class EntidadViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='sin_nombre')
     def sin_nombre(self, request):
-        """Entidades que no tienen nombre asociado (NULL)"""
         entidades = self.get_queryset().filter(Q(nombre__isnull=True) | Q(nombre=''))
         serializer = self.get_serializer(entidades, many=True)
         return Response(serializer.data)
